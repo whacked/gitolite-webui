@@ -1,0 +1,31 @@
+<html>
+   <head>
+     <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+     <title>Upload ssh key</title>
+      <link rel="stylesheet" href="forms.css" type="text/css" media="screen" charset="utf-8"/>
+   </head>
+   <body>
+      <form  class="form" action="ssh-upload" method="post" accept-charset="utf-8">
+	    <h1>Ssh public key upload</h1>
+	     <p>Upload you public ssh key</p>
+
+	    <p class="name">
+	    <input type="text" name="user" id="user"/>
+	    <label for="user"> User </label>
+	    </p>
+         
+	    <p class="email">
+	    <input type="text" name="email" id="email"/>
+	    <label for="email"> Email </label>
+	    </p>
+
+	    <p class="ssh">
+	    <input type="file" name="ssh" id="ssh"/>
+	    </p>
+
+	    <p class="submit">
+          <input type="submit" value="Continue &rarr;"/>
+	    </p>
+      </form>      	
+   </body>
+</html>
