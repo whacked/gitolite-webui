@@ -12,7 +12,7 @@
       </script>
    </head>
    <body>
-      <form  class="form" action="ssh-upload" method="post" accept-charset="utf-8">
+      <form  class="form" action="ssh-upload" method="post" accept-charset="utf-8" enctype="multipart/form-data" >
 	    <h1>Ssh public key upload</h1>
 	    <p>Upload you public ssh key</p>
 
@@ -27,7 +27,7 @@
 	    </p>
 
 	   <div class="fileinputs">
-    	     <input type="file" class="file">
+    	     <input name="file" type="file" class="file">
          </div> 
 
 	    <div class="spacer">&nbsp;</div>
