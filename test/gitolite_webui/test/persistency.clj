@@ -4,12 +4,9 @@
 
 (defn cleanup [])
 
-
-
-(fact (p/ssh-pending) => (just []))
-
 (fact (p/ssh-pending) => (just (list {:name "ronen" :email "narkisr@gmail.com" :key "ssh-rsa 1234" }))
 	(against-background (before :checks (p/persist-key-request "ronen" "narkisr@gmail.com" "ssh-rsa 1234"))))
+
 
 
 (against-background [(after :contents (cleanup))]
