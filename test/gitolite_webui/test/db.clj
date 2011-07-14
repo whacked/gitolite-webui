@@ -22,7 +22,7 @@
 
 (def *db-file* "/tmp/test-db")
 
-(defn save-sequence [] 
+(defn save-reload [] 
 	(dosync (alter test-db (fn [db] (apply-tuples db dlog/add-tuple tuples)))) 
 	(db/save *db-file*  test-db)
 	(dosync (alter test-db (fn [db] (apply-tuples db dlog/remove-tuple tuples)))) 
@@ -30,6 +30,5 @@
       (delete-file (file *db-file*)))
 
 (fact (:data (dlog/get-relation test-db :alice)) => (just [{:bob 1} {:bob 2}])
-	 (against-background (before :facts (save-sequence))))
+	 (against-background (before :facts (save-reload))))
 
-(fact )
