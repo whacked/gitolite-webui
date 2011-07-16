@@ -10,7 +10,7 @@
 
 (defn periodical-save [db-file db interval]
 	(let [timer (Timer.)]
-	  (. timer schedule  (proxy [TimerTask] [] (run [] (save db-file db)))  (* interval 1000))))
+	  (. timer schedule  (proxy [TimerTask] [] (run [] (save db-file db))) (java.util.Date.)  (long (* interval 1000)))))
 
 (defn- into-tuple [hash relation]
 	 (into [] (flatten (cons relation (seq hash)))))

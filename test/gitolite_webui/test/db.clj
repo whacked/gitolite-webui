@@ -22,13 +22,19 @@
 
 (def *db-file* "/tmp/test-db")
 
-(defn save-reload [] 
+(defn- save-and-sleep []
+  (db/periodical-save *db-file* test-db 1)
+  (. Thread sleep 1500))
+
+(defn save-reload-cycle [save-fn] 
 	(dosync (alter test-db (fn [db] (apply-tuples db dlog/add-tuple tuples)))) 
-	(db/save *db-file*  test-db)
+	(save-fn)
 	(dosync (alter test-db (fn [db] (apply-tuples db dlog/remove-tuple tuples)))) 
       (db/reload *db-file* test-db)
       (delete-file (file *db-file*)))
 
 (fact (:data (dlog/get-relation test-db :alice)) => (just [{:bob 1} {:bob 2}])
-	 (against-background (before :facts (save-reload))))
+	 (against-background (before :facts (save-reload-cycle #(db/save *db-file* test-db)))))
 
+(fact (:data (dlog/get-relation test-db :alice)) => (just [{:bob 1} {:bob 2}])
+	 (against-background (before :facts (save-reload-cycle #(save-and-sleep) ))))
