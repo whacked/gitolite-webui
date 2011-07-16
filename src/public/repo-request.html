@@ -1,3 +1,17 @@
+<html>
+   <head>
+     <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+     <title>Upload ssh key</title>
+      <link rel="stylesheet" href="forms.css" type="text/css" media="screen" charset="utf-8"/>
+      <script type="text/javascript" charset="utf-8" src="http://code.jquery.com/jquery-1.6.2.min.js"> </script>
+      <script type="text/javascript" charset="utf-8" src="fileupload.js"> </script>
+      <script type="text/javascript" charset="utf-8">
+         $(document).ready(function() {
+         	initFileUploads()  
+         });	
+      </script>
+   </head>
+   <body>
       <form  class="form" action="ssh-upload" method="post" accept-charset="utf-8" enctype="multipart/form-data" >
 	    <h1>Ssh public key upload</h1>
 	    <p>Upload you public ssh key</p>
@@ -21,3 +35,5 @@
              <input type="submit" value="Continue &rarr;"/>
 	    </p>
       </form>      	
+   </body>
+</html>
