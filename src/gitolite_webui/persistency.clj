@@ -5,18 +5,25 @@
     (:use [clojure.contrib.io :only (file)] [clojure.contrib.def :only (defonce-)] ))
 
 (defonce- db (ref (dlog/make-database 
-			     (relation :request [:name :email :key])
-			     (index :request :name))))
+			     (relation :key-request [:name :email :key])
+			     (index :key-request :name)
+			     (relation :repo-request [:name :repo]) 
+			     (index :repo-request :name)
+			     )))
 
 (defn initialize [db-file]
-	(db/reload db-file db)) 
+	(db/reload db-file db)
+      (db/periodical-save db-file db 5)) 
 
 (defn ssh-pending [] 
-	(dlog/select @db :request {:name "ronen"}))
+	(dlog/select @db :key-request {:name "ronen"}))
 
 (defn- add-request [db request]
-	 (dlog/add-tuple db :request request))
+	 (dlog/add-tuple db :key-request request))
 
-(defn persist-key-request [name email key ]
-	(dosync 
-	  (alter db add-request {:name name :email email :key key })))
+(defn persist-key-request [name email key]
+	(dosync (alter db add-request {:name name :email email :key key })))
+
+(defn persist-repo-request [name repo]
+	
+	)
