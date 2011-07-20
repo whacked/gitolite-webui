@@ -16,15 +16,19 @@
 
 (persist/initialize "gitolite-db")
 
-(deftemplate index "public/index.html" [])
+(def index (html-resource  "public/index.html"))
 
 (deftemplate upload-success "public/upload-success.html" [])
 
 (def upload-form (html-resource "public/upload-form.html")) 
 
-(def upload-form (html-resource "public/access-form.html")) 
+(def access-form (html-resource "public/access-form.html")) 
 
 (deftemplate forms-layout "public/forms-layout.html" [body title]
+		[:body] (content body) 
+		[:title] (content title))
+
+(deftemplate general-layout "public/general-layout.html" [body title]
 		[:body] (content body) 
 		[:title] (content title))
 
@@ -33,10 +37,10 @@
   (persist/persist-key-request name email (slurp (file :tempfile))))
 
 (defroutes main-routes
-           (GET  "/" [] (render (index)))
+           (GET  "/" [] (render (general-layout index "gitolite webui")))
 
 	     (GET "/upload-form.html" [] (render (forms-layout upload-form "upload ssh key")))
-	     (GET "/access-form.html" [] (render (forms-layout upload-form "request repository access")))
+	     (GET "/access-form.html" [] (render (forms-layout access-form "request repository access")))
 
 	     (mp/wrap-multipart-params 
               (POST "/ssh-upload" {params :params} 

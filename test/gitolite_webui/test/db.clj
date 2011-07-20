@@ -37,4 +37,4 @@
 	 (against-background (before :facts (save-reload-cycle #(db/save *db-file* test-db)))))
 
 (fact (:data (dlog/get-relation test-db :alice)) => (just [{:bob 1} {:bob 2}])
-	 (against-background (before :facts (save-reload-cycle #(save-and-sleep) ))))
+	 (against-background (before :facts (save-reload-cycle #(save-and-sleep)))))
