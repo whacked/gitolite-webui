@@ -1,6 +1,6 @@
 (ns gitolite-webui.gitolite
     (:use [clojure.contrib.io :only [file]] 
-	    [clojure.contrib.string :only [split-lines split]]
+	    [clojure.contrib.string :only [split-lines split as-str]]
 	    [clojure.contrib.macros :only [letfn- ]]
 	    ))
 
@@ -20,4 +20,5 @@
 			(assoc m (-> repo first repo-name keyword) (permissions (rest repo))))
 		  {} (raw-repos path)))
 
-
+(defn repos []
+  (map as-str (keys (parse-conf "test/resources/gitolite.conf"))))
