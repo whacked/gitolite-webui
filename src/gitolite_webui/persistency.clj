@@ -16,14 +16,16 @@
       (db/periodical-save db-file db 5)) 
 
 (defn ssh-pending [] 
-	(dlog/select @db :key-request {:name "ronen"}))
+	(-> @db :key-request :data))
 
-(defn- add-request [db request]
-	 (dlog/add-tuple db :key-request request))
+(defn- add-request [db relation request]
+	 (dlog/add-tuple db relation request))
 
 (defn persist-key-request [name email key]
-	(dosync (alter db add-request {:name name :email email :key key })))
+	(dosync (alter db add-request :key-request {:name name :email email :key key })))
+
+(defn access-pending []
+   (-> @db :repo-request :data))
 
 (defn persist-repo-request [name repo]
-	
-	)
+	(dosync (alter db add-request :repo-request {:name name :repo repo })))
