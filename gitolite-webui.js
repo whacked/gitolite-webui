@@ -1,0 +1,1 @@
+{"gitolite-home":"test/resources/"}

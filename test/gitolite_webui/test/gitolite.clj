@@ -6,7 +6,7 @@
 (fact (g/repo-name "repo   play-0") => (just "play-0"))
 
 
-(fact (g/parse-conf "test/resources/gitolite.conf") => 
+(fact (g/parse-conf "test/resources/conf/gitolite.conf") => 
   (contains 
     {:play-lasting {"alice" "RW+" "bob" "RW+"}}
     {:moving-around {"ronenn" "RW+" "jenkins" "RW+"}}

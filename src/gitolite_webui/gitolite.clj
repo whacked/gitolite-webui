@@ -2,7 +2,9 @@
     (:use [clojure.contrib.io :only [file]] 
 	    [clojure.contrib.string :only [split-lines split as-str]]
 	    [clojure.contrib.macros :only [letfn- ]]
-	    ))
+          [clojure.contrib.io :only (file)]
+           gitolite-webui.config 
+          ))
 
 (defn repo-name [repo-str]
 	(last (re-matches #"repo\s+(.*)" repo-str)))
@@ -20,5 +22,11 @@
 			(assoc m (-> repo first repo-name keyword) (permissions (rest repo))))
 		  {} (raw-repos path)))
 
+(defn resolve []
+	(str (:gitolite-home *config*) "gitolite.conf"))
+
 (defn repos []
-  (map as-str (keys (parse-conf "test/resources/gitolite.conf"))))
+	(map as-str (keys (-> "conf/gitolite.conf" resolve parse-conf))))
+
+(defn pub-keys [] 
+	(map #(.getName %) (file-seq (-> "test/resources/keydir" resolve file ))))
