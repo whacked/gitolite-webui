@@ -23,7 +23,7 @@
 	     (mp/wrap-multipart-params 
               (POST "/ssh-upload" {params :params} 
                 (process-ssh-upload params)
-                (render (form-success "Ssh key upload request successfully" "You can now proceed to requesting access to repositories.")))) 
+                (render (form-success "Ssh key upload request successfully" "You can now proceed to requesting access to repositories.") "ssh upload done"))) 
            (POST "/access-request" {params :params} 
                 (process-ssh-upload params)
                 (render (form-success)))

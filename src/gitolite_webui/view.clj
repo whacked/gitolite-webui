@@ -1,14 +1,11 @@
 (ns gitolite-webui.view
   (:use 
-    [net.cgrand.enlive-html :only [deftemplate]])
+    [net.cgrand.enlive-html :only [deftemplate defsnippet]])
   (:require 
     [gitolite-webui.gitolite :as git]
     [net.cgrand.enlive-html :as en]))
 
-
-
-
-(def index (en/html-resource  "public/index.html"))
+(def index (en/html-resource "public/index.html"))
 
 (def upload-form (en/html-resource "public/upload-form.html")) 
 
@@ -23,7 +20,7 @@
 		[:title] (en/content title))
 
 (defn render
-	([t title] (->> t (general-layout title) (apply str)) )
+	([t title] (->> t (general-layout title) (apply str)))
 	([layout t title] (->> t (layout title) (apply str))))
 
 (defn access-form-inc-repos []
@@ -33,6 +30,6 @@
 		  		    (en/content repo)
 		  		    (en/set-attr :value repo)))))
 
-(deftemplate form-success "public/form-success.html" [title desc]
+(defsnippet form-success "public/form-success.html" [:#wrapper] [title desc]
 	    [:h1] (en/content title)
 	    [:p] (en/content desc))
