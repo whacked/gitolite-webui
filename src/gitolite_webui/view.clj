@@ -32,4 +32,11 @@
 
 (defsnippet form-success "public/form-success.html" [:#wrapper] [title desc]
 	    [:h1] (en/content title)
-	    [:p] (en/content desc))
+	    [:#description] (en/content desc))
+
+(def ssh-upload 
+     (form-success "Key uploaded successfully" 
+   		(list "You can now proceed to requesting access to " {:tag :a :attrs {:href "/access-form.html"} :content "repositories."})))
+
+
+(def request-submited (form-success "Access request submited" "An email will be sent to you once its approved."))
