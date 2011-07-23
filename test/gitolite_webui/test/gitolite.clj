@@ -16,3 +16,4 @@
     )	
   )
 
+(fact (g/pub-keys) => (contains ["alice.pub" "bob.pub"] :gaps-ok :in-any-order))

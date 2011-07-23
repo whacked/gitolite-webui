@@ -22,11 +22,12 @@
 			(assoc m (-> repo first repo-name keyword) (permissions (rest repo))))
 		  {} (raw-repos path)))
 
-(defn resolve []
-	(str (:gitolite-home *config*) "gitolite.conf"))
+(defn- resolve-path [path]
+	(str (:gitolite-home *config*) path))
 
 (defn repos []
-	(map as-str (keys (-> "conf/gitolite.conf" resolve parse-conf))))
+	(map as-str (keys (-> "conf/gitolite.conf" resolve-path parse-conf))))
 
 (defn pub-keys [] 
-	(map #(.getName %) (file-seq (-> "test/resources/keydir" resolve file ))))
+	(map #(.getName %) (file-seq (-> "keydir/" resolve-path file ))))
+
