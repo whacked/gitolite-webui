@@ -17,13 +17,16 @@
    (persist/persist-key-request name email (slurp (file :tempfile))))
 
 (defroutes main-routes
-           (GET  "/" [] (render (general-layout index "gitolite webui")))
-	     (GET "/upload-form.html" [] (render (forms-layout upload-form "upload ssh key")))
-	     (GET "/access-form.html" [] (render (forms-layout (access-form-inc-repos) "request repository access"))) 
+           (GET  "/" [] (render index "gitolite webui"))
+	     (GET "/upload-form.html" [] (render forms-layout upload-form "upload ssh key"))
+	     (GET "/access-form.html" [] (render forms-layout (access-form-inc-repos) "request repository access")) 
 	     (mp/wrap-multipart-params 
               (POST "/ssh-upload" {params :params} 
                 (process-ssh-upload params)
-                (render (upload-success)))) 
+                (render (form-success "Ssh key upload request successfully" "You can now proceed to requesting access to repositories.")))) 
+           (POST "/access-request" {params :params} 
+                (process-ssh-upload params)
+                (render (form-success)))
 	     (route/resources "/")
 	     (route/not-found "Page not found"))
 
