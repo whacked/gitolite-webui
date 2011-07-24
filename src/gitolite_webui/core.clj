@@ -20,6 +20,7 @@
            (GET  "/" [] (render index "gitolite webui"))
 	     (GET "/upload-form.html" [] (render forms-layout upload-form "upload ssh key"))
 	     (GET "/access-form.html" [] (render forms-layout (access-form-inc-repos) "request repository access")) 
+	     (GET "/admin-requests.html" [] (render forms-layout (admin-form-with-data) "approve requests")) 
 	     (mp/wrap-multipart-params 
               (POST "/ssh-upload" {params :params} 
                 (process-ssh-upload params)

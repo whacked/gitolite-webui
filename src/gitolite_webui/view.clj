@@ -11,6 +11,8 @@
 
 (def access-form (en/html-resource "public/access-form.html")) 
 
+(def admin-requests (en/html-resource "public/admin-form.html")) 
+
 (deftemplate forms-layout "public/forms-layout.html" [title body]
 		[:body] (en/content body) 
 		[:title] (en/content title))
@@ -24,6 +26,13 @@
 	([layout t title] (->> t (layout title) (apply str))))
 
 (defn access-form-inc-repos []
+  (en/transform access-form [:option] 
+      (en/clone-for [repo (git/repos)]
+		  		  (en/do-> 
+		  		    (en/content repo)
+		  		    (en/set-attr :value repo)))))
+
+(defn admin-form-with-data  []
   (en/transform access-form [:option] 
       (en/clone-for [repo (git/repos)]
 		  		  (en/do-> 
