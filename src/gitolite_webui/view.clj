@@ -11,13 +11,17 @@
 
 (def access-form (en/html-resource "public/access-form.html")) 
 
-(def admin-requests (en/html-resource "public/admin-form.html")) 
+(def admin-form (en/html-resource "public/admin-form.html")) 
 
 (deftemplate forms-layout "public/forms-layout.html" [title body]
 		[:body] (en/content body) 
 		[:title] (en/content title))
 
 (deftemplate general-layout "public/general-layout.html" [title body]
+		[:body] (en/content body) 
+		[:title] (en/content title))
+
+(deftemplate admin-layout "public/admin-layout.html" [title body]
 		[:body] (en/content body) 
 		[:title] (en/content title))
 
