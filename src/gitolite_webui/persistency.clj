@@ -8,8 +8,7 @@
 			     (relation :key-request [:name :email :key])
 			     (index :key-request :name)
 			     (relation :repo-request [:name :repo]) 
-			     (index :repo-request :name)
-			     )))
+			     (index :repo-request :name))))
 
 (defn initialize [db-file]
 	(db/reload db-file db)

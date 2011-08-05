@@ -3,7 +3,8 @@
     	 compojure.core
     	 gitolite-webui.view)
     (:require 
-      (ring.middleware [multipart-params :as mp])
+      (ring.middleware [multipart-params :as mp ])
+      (ring.middleware [params :as p])
       (clojure.contrib [duck-streams :as ds])
       [gitolite-webui.persistency :as persist]
 	[compojure.route :as route]
@@ -33,13 +34,14 @@
            (POST "/access-request" [name repo]
                 (persist/persist-repo-request name repo)
                 (render request-submited "request submited"))
-           (mp/wrap-multipart-params 
-           (POST "/process-requests" {params :params}
+           (p/wrap-params 
+             (POST "/process-requests" {params :params form-params :form-params}
                 (println params) 
+                (println form-params) 
                 (render request-submited "request submited")
                 )) 
 	     (route/resources "/")
 	     (route/not-found "Page not found"))
 
-(def app (handler/site main-routes))
+(def app  (handler/site main-routes))
 
