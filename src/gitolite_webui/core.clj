@@ -16,17 +16,15 @@
 (defn process-ssh-upload [{:keys [name email file]}]
    (persist/persist-key-request name email (slurp (file :tempfile))))
 
-
-
 (defroutes main-routes
            (GET  "/" [] (render index "gitolite webui"))
-	     (GET "/upload-form.html" [] (render forms-layout upload-form "upload ssh key"))
-	     (GET "/access-form.html" [] (render forms-layout (access-form-inc-repos) "request repository access")) 
-	     (GET "/login-form.html" [] (render forms-layout login-form "Login to admin")) 
+	     (GET "/upload-form" [] (render forms-layout upload-form "upload ssh key"))
+	     (GET "/access-form" [] (render forms-layout (access-form-inc-repos) "request repository access")) 
+	     (GET "/login-form" [] (render forms-layout login-form "Login to admin")) 
 	     (GET "/admin-requests" {session :session}
 	     	    (if (session :user) 
 	     	    	 (render admin-layout admin-form "approve requests")
-	     	       (res/redirect "/"))) 
+	     	       (res/redirect "/login-form"))) 
 	     (mp/wrap-multipart-params 
               (POST "/ssh-upload" {params :params} 
                 (process-ssh-upload params)
