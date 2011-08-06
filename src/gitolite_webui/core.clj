@@ -5,6 +5,7 @@
     (:require 
       (ring.middleware [multipart-params :as mp ])
       (ring.middleware [params :as p])
+      (ring.adapter [jetty :as jet])
       (clojure.contrib [duck-streams :as ds])
       [gitolite-webui.persistency :as persist]
 	[compojure.route :as route]
@@ -45,3 +46,7 @@
 
 (def app  (handler/site main-routes))
 
+(defn -main []
+   (def server (jet/run-jetty app {:port 8080 :join? false})))
+
+(defn stop [] (. server stop))
