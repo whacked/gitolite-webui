@@ -1,7 +1,9 @@
 (ns gitolite-webui.view
   (:use 
+    [gitolite-webui.persistency :only [ssh-pending access-pending]]
     [net.cgrand.enlive-html :only [deftemplate defsnippet]])
   (:require 
+    [clojure.contrib.json :as json]
     [gitolite-webui.gitolite :as git]
     [net.cgrand.enlive-html :as en]))
 
@@ -38,12 +40,21 @@
 		  		    (en/content repo)
 		  		    (en/set-attr :value repo)))))
 
+(defmulti request-option type)
+(defmethod request-option :ssh [req]
+  (conj [] (str (:name req) ":key-request") (json/json-str req)))
+(defmethod request-option :access [req]
+ (conj [] (str (:name req) "-" (:repo req) ":repo-request") (json/json-str req)) )
+
+(defn- requests []
+   (map #(request-option %) (concat (ssh-pending) (access-pending))))
+
 (defn admin-form-with-data  []
-  (en/transform access-form [:option] 
-      (en/clone-for [repo (git/repos)]
+  (en/transform admin-form [:option] 
+      (en/clone-for [req (requests) :let [[s val] req]]
 		  		  (en/do-> 
-		  		    (en/content repo)
-		  		    (en/set-attr :value repo)))))
+		  		    (en/content s)
+		  		    (en/set-attr :value val)))))
 
 (defsnippet form-success "public/form-success.html" [:#wrapper] [title desc]
 	    [:h1] (en/content title)

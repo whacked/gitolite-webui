@@ -10,12 +10,15 @@
 			     (relation :repo-request [:name :repo]) 
 			     (index :repo-request :name))))
 
+(defn- apply-type [rel t]
+  (map #(with-meta % {:type t}) rel ))
+
 (defn initialize [db-file]
 	(db/reload db-file db)
       (db/periodical-save db-file db 5)) 
 
 (defn ssh-pending [] 
-	(-> @db :key-request :data))
+	(-> @db :key-request :data (apply-type :ssh)))
 
 (defn- add-request [db relation request]
 	 (dlog/add-tuple db relation request))
@@ -24,7 +27,7 @@
 	(dosync (alter db add-request :key-request {:name name :email email :key key })))
 
 (defn access-pending []
-   (-> @db :repo-request :data))
+   (-> @db :repo-request :data (apply-type :access)))
 
 (defn persist-repo-request [name repo]
 	(dosync (alter db add-request :repo-request {:name name :repo repo })))

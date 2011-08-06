@@ -23,7 +23,7 @@
 	     (GET "/login-form" [] (render forms-layout login-form "Login to admin")) 
 	     (GET "/admin-requests" {session :session}
 	     	    (if (session :user) 
-	     	    	 (render admin-layout admin-form "approve requests")
+	     	    	 (render admin-layout (admin-form-with-data) "approve requests")
 	     	       (res/redirect "/login-form"))) 
 	     (mp/wrap-multipart-params 
               (POST "/ssh-upload" {params :params} 
@@ -39,6 +39,7 @@
            	     	 )) 
            (p/wrap-params 
              (POST "/process-requests" {params :params form-params :form-params} 
+             	 (println form-params)
              	 (render request-submited "request submited")
                 )) 
 	     (route/resources "/")
