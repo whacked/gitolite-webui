@@ -3,3 +3,5 @@
   (:use [clojure.contrib.io :only (file)]))
 
 (def *config* (json/read-json (slurp (file "gitolite-webui.js"))))
+
+(defn admins [user] (get-in *config* [:admins (keyword user)]))

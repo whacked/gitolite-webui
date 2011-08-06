@@ -1,1 +1,4 @@
-{"gitolite-home":"test/resources/"}
+{ 
+  "gitolite-home":"test/resources/",
+  "admins":{"admin":"changeme"}
+}

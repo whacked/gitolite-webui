@@ -13,6 +13,8 @@
 
 (def admin-form (en/html-resource "public/admin-form.html")) 
 
+(def login-form (en/html-resource "public/login-form.html")) 
+
 (deftemplate forms-layout "public/forms-layout.html" [title body]
 		[:body] (en/content body) 
 		[:title] (en/content title))
