@@ -38,7 +38,7 @@
            	     	   "Failed to login"
            	     	 )) 
            (p/wrap-params 
-             (POST "/process-requests" {params :params form-params :form-params} 
+             (POST "/process-requests" {params :params form-params :form-params requests :requests} 
              	 (println form-params)
              	 (render request-submited "request submited")
                 )) 
