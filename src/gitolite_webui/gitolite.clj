@@ -11,7 +11,7 @@
 	(last (re-matches #"repo\s+(.*)" repo-str)))
 
 (defn- resolve-path [path]
-	(str (:gitolite-home *config*) path))
+	(str (:gitolite-home @config) path))
 
 (defn- gitoconf []
 	(resolve-path "conf/gitolite.conf"))

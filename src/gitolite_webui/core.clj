@@ -6,6 +6,7 @@
       (ring.util [response :as res])
       (clojure.contrib [duck-streams :as ds])
       [gitolite-webui.persistency :as persist]
+      [gitolite-webui.config :as conf]
 	[compojure.route :as route]
 	[compojure.handler :as handler]))
 
@@ -45,9 +46,10 @@
 	     (route/resources "/")
 	     (route/not-found "Page not found"))
 
-(def app (-> (handler/site main-routes) ))
+(def app (-> (handler/site main-routes)))
 
 (defn -main []
+   (conf/prod) 
    (def server (jet/run-jetty #'app {:port 8080 :join? false})))
 
 (defn stop [] (. server stop))

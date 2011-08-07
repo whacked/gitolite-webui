@@ -1,7 +1,16 @@
 (ns gitolite-webui.config
   (:require [clojure.contrib.json :as json])
-  (:use [clojure.contrib.io :only (file)]))
+  (:use [clojure.contrib.io :only (file)]
+  	  clojure.contrib.def 
+  	  ))
 
-(def *config* (json/read-json (slurp (file "gitolite-webui.js"))))
+(defn read-config [env] 
+   (let [resolution {:dev "test/resources/" :prod "./"}]	
+	(json/read-json (slurp (file (resolution env) "gitolite-webui.js")))))
 
-(defn admins [user] (get-in *config* [:admins (keyword user)]))
+(defonce config (atom (read-config :dev)))
+
+(defn prod [] (swap! config (fn [_] (read-config :prod))))
+
+(defn admins [user] 
+	(get-in @config [:admins (keyword user)]))
