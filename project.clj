@@ -6,7 +6,9 @@
                  [compojure "0.6.4"]
                  [enlive "1.0.0"]
                  [hiccup "0.3.6"]
-                 [midje "1.1.1"]]
+                 [midje "1.1.1"]
+                 [fs "0.8.1"]]
+
   
      :dev-dependencies [[lein-ring "0.4.5"][lein-midje "1.0.3"] ]
      :ring {:handler gitolite-webui.core/app}

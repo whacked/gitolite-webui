@@ -3,7 +3,7 @@
 	[gitolite-webui.db :as db] 
 	[clojure.contrib.datalog.database :as dlog])
     (:use midje.sweet 
-    	    [clojure.contrib.io :only (file delete-file)]
+    	    [clojure.java.io :only (file delete-file)]
     	    ))
 
 (defonce tuples [[:alice {:bob 1}] [:alice {:bob 2}]]) 
