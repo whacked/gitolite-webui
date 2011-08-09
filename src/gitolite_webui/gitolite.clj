@@ -4,6 +4,7 @@
 	    [clojure.contrib.macros :only [letfn- ]]
           [clojure.string :only (replace-first)]
           [clojure.core :only [re-find]]
+          [clojure.template :only [apply-template]]
            gitolite-webui.config 
           ))
 
@@ -51,8 +52,20 @@
 (defn convert-windows [key]
   )
 
+(def windows-key-mathces
+  [#"---- BEGIN SSH2 PUBLIC KEY ----"
+   #"Comment: \".*\"" 
+   #".*"
+   #".*"
+   #".*"
+   #".*"
+   #"---- END SSH2 PUBLIC KEY ----"
+   ])
+
 (defn windows-format-key? [key]
-  )
+  (every? not 
+    (map (fn [[match line]] (nil? (re-find match line))) 
+  	(partition 2 (interleave windows-key-mathces (.split key "\n"))))))
 
 (defn format [key]
   (if (windows-format-key? key)

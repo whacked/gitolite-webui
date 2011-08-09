@@ -28,7 +28,10 @@
 	))		  
    (fact (g/user-repo-manipulation {:name "bob" :repo "play-0"}) => 
 	(contains "repo    play-0\n        RW+     =   bob\n"))
-   (fact (g/pub-keys) => (contains ["alice.pub" "bob.pub"] :gaps-ok :in-any-order)))
+   (fact (g/pub-keys) => (contains ["alice.pub" "bob.pub"] :gaps-ok :in-any-order))
+   (fact (g/windows-format-key? (slurp "test/resources/keydir/alice.pub")) => false)  
+   (fact (g/windows-format-key? (slurp "test/resources/id_rsa.pub")) => true)  
+   )
 
 (fact (g/format ...unix-key...) => ...unix-key...
    (provided 
