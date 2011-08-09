@@ -48,6 +48,20 @@
 (defn add-user-to-repo  [req]
      (spit gitoconf (user-repo-manipulation req)))
 
-(defn add-key [req]
-   body
+(defn convert-windows [key]
+  )
+
+(defn windows-format-key? [key]
+  )
+
+(defn format [key]
+  (if (windows-format-key? key)
+    (convert-windows key) 
+    key
+    ))
+
+(defn add-key [{:keys [name key]}]
+  (let [formated-key (format key)]
+    (spit (resolve-path (str "keydir/" name ".pub" )) key)
+   )   
   )

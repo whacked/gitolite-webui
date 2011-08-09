@@ -30,5 +30,9 @@
 	(contains "repo    play-0\n        RW+     =   bob\n"))
    (fact (g/pub-keys) => (contains ["alice.pub" "bob.pub"] :gaps-ok :in-any-order)))
 
+(fact (g/format ...unix-key...) => ...unix-key...
+   (provided 
+     (g/windows-format-key? ...unix-key...) => false
+     ))
 
 
