@@ -48,3 +48,6 @@
 (defn add-user-to-repo  [req]
      (spit gitoconf (user-repo-manipulation req)))
 
+(defn add-key [req]
+   body
+  )
