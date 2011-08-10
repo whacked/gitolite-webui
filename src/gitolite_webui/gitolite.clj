@@ -63,9 +63,11 @@
    ])
 
 (defn windows-format-key? [key]
-  (every? not 
-    (map (fn [[match line]] (nil? (re-find match line))) 
-  	(partition 2 (interleave windows-key-mathces (.split key "\n"))))))
+  (let [lines (.split key "\n")]
+    (and (= (alength lines) (.length windows-key-mathces))
+      (every? not 
+        (map (fn [[match line]] (nil? (re-find match line))) 
+  	    (partition 2 (interleave windows-key-mathces lines)))))))
 
 (defn format [key]
   (if (windows-format-key? key)
