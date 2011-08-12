@@ -12,15 +12,13 @@
 	(let [timer (Timer.)]
 	  (. timer schedule  (proxy [TimerTask] [] (run [] (save db-file db))) (java.util.Date.)  (long (* interval 1000)))))
 
-(defn- into-tuple [hash relation]
-	 (into [] (flatten (cons relation (seq hash)))))
 
 (defn- tuples-of [relation]
-	 (into []  (map #(vector (first relation) %) (-> relation (second) (:data)))))
+	 (into [] (map #(vector (first relation) %) (-> relation (second) (:data)))))
 
 (defn- db-map-tuples [db-map]
-	 (first (filter (comp not empty?) 
-			    (reduce (fn [acc relation ] (conj acc (tuples-of relation))) [] (into [] db-map)))))
+	 (filter (comp not empty?) 
+		(reduce (fn [acc relation] (concat acc (tuples-of relation))) [] (into [] db-map))))
 
 (defn reload [db-file db]
 	(if (-> db-file (file) (. exists))
@@ -28,3 +26,4 @@
 	    (doseq [tuple (db-map-tuples db-map)] 
 		     (dosync (alter db 
 			 	  (fn [db] (dlog/add-tuple db (first tuple) (second tuple)))))))))
+
