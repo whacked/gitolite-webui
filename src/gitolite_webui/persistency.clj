@@ -18,7 +18,7 @@
       (db/periodical-save db-file db 5)) 
 
 (defn ssh-pending [] 
-	(-> @db :key-request :data (apply-type :ssh)))
+	(-> @db :key-request :data (apply-type :key-request)))
 
 (defn- add-request [db relation request]
 	 (dlog/add-tuple db relation request))
@@ -27,7 +27,11 @@
 	(dosync (alter db add-request :key-request {:name name :email email :key key })))
 
 (defn access-pending []
-   (-> @db :repo-request :data (apply-type :access)))
+   (-> @db :repo-request :data (apply-type :repo-request)))
 
 (defn persist-repo-request [name repo]
 	(dosync (alter db add-request :repo-request {:name name :repo repo })))
+
+(defn clear-request [req]
+	(dosync (alter db (fn [db] (dlog/remove-tuple (type req) req)))))
+

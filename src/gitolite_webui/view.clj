@@ -44,9 +44,9 @@
    (json/json-str (assoc req :type (type req))))
 
 (defmulti request-option type)
-(defmethod request-option :ssh [req]
+(defmethod request-option :key-request [req]
   (conj [] (str (:name req) ":key-request") (request-as-json req)))
-(defmethod request-option :access [req]
+(defmethod request-option :repo-request [req]
  (conj [] (str (:name req) "-" (:repo req) ":repo-request") (request-as-json req)))
 
 (defn- requests []
