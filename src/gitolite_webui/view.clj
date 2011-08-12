@@ -41,7 +41,7 @@
 		  		    (en/set-attr :value repo)))))
 
 (defn request-as-json [req]
-   (json/json-str (assoc req :type (type req))))
+   (json/json-str (assoc req :req-type (type req))))
 
 (defmulti request-option type)
 (defmethod request-option :key-request [req]
