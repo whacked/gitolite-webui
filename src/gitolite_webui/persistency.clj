@@ -33,5 +33,5 @@
 	(dosync (alter db add-request :repo-request {:name name :repo repo })))
 
 (defn clear-request [req]
-	(dosync (alter db (fn [db] (dlog/remove-tuple (type req) req)))))
+	(dosync (alter db (fn [db] (dlog/remove-tuple db (type req) (dissoc req :req-type ))))))
 
