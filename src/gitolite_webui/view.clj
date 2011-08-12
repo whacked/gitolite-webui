@@ -40,11 +40,14 @@
 		  		    (en/content repo)
 		  		    (en/set-attr :value repo)))))
 
+(defn request-as-json [req]
+   (json/json-str (assoc req :type (type req))))
+
 (defmulti request-option type)
 (defmethod request-option :ssh [req]
-  (conj [] (str (:name req) ":key-request") (json/json-str req)))
+  (conj [] (str (:name req) ":key-request") (request-as-json req)))
 (defmethod request-option :access [req]
- (conj [] (str (:name req) "-" (:repo req) ":repo-request") (json/json-str req)) )
+ (conj [] (str (:name req) "-" (:repo req) ":repo-request") (request-as-json req)))
 
 (defn- requests []
    (map #(request-option %) (concat (ssh-pending) (access-pending))))
@@ -62,7 +65,7 @@
 
 (def ssh-upload 
      (form-success "Key uploaded successfully" 
-   		(list "You can now proceed to requesting access to " {:tag :a :attrs {:href "/access-form.html"} :content "repositories."})))
+   		(list "You can now proceed to requesting access to " {:tag :a :attrs {:href "/access-form"} :content "repositories."})))
 
 
 (def request-submited (form-success "Access request submited" "An email will be sent to you once its approved."))

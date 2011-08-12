@@ -1,11 +1,12 @@
 (ns gitolite-webui.core 
     (:use compojure.core gitolite-webui.view [gitolite-webui.config :only [admins]])
     (:require 
-      (ring.middleware [multipart-params :as mp ] [params :as p] [session :as session])
+      (ring.middleware [multipart-params :as mp ] [params :as p] [session :as session] [reload :as reload])
       (ring.adapter [jetty :as jet])
       (ring.util [response :as res])
       (clojure.contrib [duck-streams :as ds])
       [gitolite-webui.persistency :as persist]
+      [gitolite-webui.req-processor :as process]
       [gitolite-webui.config :as conf]
 	[compojure.route :as route]
 	[compojure.handler :as handler]))
@@ -39,9 +40,9 @@
            	     	   "Failed to login"
            	     	 )) 
            (p/wrap-params 
-             (POST "/process-requests" {params :params form-params :form-params requests :requests} 
-             	 (println form-params)
-             	 (render request-submited "request submited")
+             (POST "/process-requests" {params :params form-params :form-params} 
+             	 (process/process-requests (form-params "requests"))
+             	 "done"
                 )) 
 	     (route/resources "/")
 	     (route/not-found "Page not found"))
@@ -50,7 +51,7 @@
 
 (defn -main []
    (conf/prod) 
-   (def server (jet/run-jetty #'app {:port 8080 :join? false})))
+   (def server (jet/run-jetty #'app  {:port 8081 :join? false})))
 
 (defn stop [] (. server stop))
 

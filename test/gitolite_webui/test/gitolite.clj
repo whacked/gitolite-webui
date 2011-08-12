@@ -32,7 +32,7 @@
    (fact (g/windows-format-key? (slurp "test/resources/keydir/alice.pub")) => false)  
    (fact (g/windows-format-key? (slurp "test/resources/id_rsa_broken.pub")) => false)  
    (fact (g/windows-format-key? (slurp "test/resources/id_rsa.pub")) => true)  
-   )
+   (fact (g/convert-windows (slurp "test/resources/id_rsa.pub") "bob@host") => (slurp "test/resources/id_rsa_converted.pub")))
 
 (fact (g/format ...unix-key...) => ...unix-key...
    (provided 

@@ -4,7 +4,7 @@
 	    [clojure.contrib.macros :only [letfn- ]]
           [clojure.string :only (replace-first)]
           [clojure.core :only [re-find]]
-          [clojure.template :only [apply-template]]
+          clojure.contrib.strint
            gitolite-webui.config 
           ))
 
@@ -47,10 +47,10 @@
     (replace-first conf pattern (str match "\n" (perm-to-user name "RW+")))))
 
 (defn add-user-to-repo  [req]
-     (spit gitoconf (user-repo-manipulation req)))
+     (spit (gitoconf) (user-repo-manipulation req)))
 
-(defn convert-windows [key]
-  )
+(defn convert-windows [key host]
+    (<< "ssh-rsa ~(apply str (drop-last (nthnext (.split key \"\\n\") 2))) ~{host}\n" ))
 
 (def windows-key-mathces
   [#"---- BEGIN SSH2 PUBLIC KEY ----"
@@ -72,11 +72,10 @@
 (defn format [key]
   (if (windows-format-key? key)
     (convert-windows key) 
-    key
+     key
     ))
 
 (defn add-key [{:keys [name key]}]
   (let [formated-key (format key)]
     (spit (resolve-path (str "keydir/" name ".pub" )) key)
-   )   
-  )
+   ))
