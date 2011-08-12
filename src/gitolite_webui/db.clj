@@ -8,9 +8,10 @@
 (defn save [db-file db]
 	(spit (file db-file) (json/json-str @db)))
 
+(def timer (atom (Timer.)))
+
 (defn periodical-save [db-file db interval]
-	(let [timer (Timer.)]
-	  (. timer schedule  (proxy [TimerTask] [] (run [] (save db-file db))) (java.util.Date.)  (long (* interval 1000)))))
+  (. @timer schedule  (proxy [TimerTask] [] (run [] (save db-file db))) (java.util.Date.)  (long (* interval 1000))))
 
 
 (defn- tuples-of [relation]
