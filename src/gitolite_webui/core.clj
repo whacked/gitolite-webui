@@ -40,7 +40,11 @@
            	     	 )) 
            (p/wrap-params 
              (POST "/process-requests" {params :params form-params :form-params} 
-             	 (process/process-requests (form-params "requests"))
+                (let [requests (form-params "requests")]
+             	(if (string? requests)
+             	   (process/process-requests (vector requests))  
+             	   (process/process-requests requests)  
+             	   )) 
              	 "done"
                 )) 
 	     (route/resources "/")
