@@ -4,6 +4,7 @@
       (ring.middleware [multipart-params :as mp] [params :as p] [session :as session]) 
       (ring.util [response :as res]) 
       [gitolite-webui.persistency :as persist]
+      [gitolite-webui.validations :as valid]
 	[compojure.route :as route]
       [gitolite-webui.req-processor :as process]))
 
@@ -12,25 +13,33 @@
  
 (defroutes main-routes
            (GET  "/" [] (render index "gitolite webui"))
-	     (GET "/upload-form" [] (render forms-layout upload-form "upload ssh key"))
+	     (GET "/upload-form" [] 
+	     	    (render forms-layout upload-form "upload ssh key"))
 	     (GET "/access-form" [] (render forms-layout (access-form-inc-repos) "request repository access")) 
 	     (GET "/login-form" [] (render forms-layout login-form "Login to admin")) 
 	     (GET "/admin-requests" {session :session}
 	     	    (if (session :user) 
 	     	    	 (render admin-layout (admin-form-with-data) "approve requests")
 	     	       (res/redirect "/login-form"))) 
+
 	     (mp/wrap-multipart-params 
               (POST "/ssh-upload" {params :params} 
-                (process-ssh-upload params)
-                (render ssh-upload "ssh upload done"))) 
+                (if-let [errors (valid/upload-validate params)]
+                	(do	(println errors)
+                   (render forms-layout (with-errors upload-form errors) "upload ssh key" )) 
+                   (do (process-ssh-upload params) 
+                     (render ssh-upload "ssh upload done")))))
+
            (POST "/access-request" [name repo]
                 (persist/persist-repo-request name repo)
                 (render request-submited "request submited"))
+
            (POST "/login" [name pass session] 
            	     (if (and (-> pass nil? not) (.equals pass (admins name))) 
            	     	   (assoc (res/redirect "/admin-requests") :session (assoc session :user name) )  
            	     	   "Failed to login"
            	     	 )) 
+
            (p/wrap-params 
              (POST "/process-requests" {params :params form-params :form-params} 
                 (let [requests (form-params "requests")]

@@ -7,6 +7,8 @@
                  [enlive "1.0.0"]
                  [hiccup "0.3.6"]
                  [midje "1.1.1"]
+                 [clj-decline "0.0.5"]
+                 [pretzel "0.2.2"]
                  [fs "0.8.1"]]
 
   

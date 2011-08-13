@@ -1,33 +1,24 @@
 (ns gitolite-webui.view
   (:use 
     [gitolite-webui.persistency :only [ssh-pending access-pending]]
-    [net.cgrand.enlive-html :only [deftemplate defsnippet]])
+    [net.cgrand.enlive-html :only [deftemplate defsnippet transform set-attr at attr=]]
+    [clojure.template :only [do-template]] 
+     clojure.contrib.strint) 
   (:require 
     [clojure.contrib.json :as json]
     [gitolite-webui.gitolite :as git]
     [net.cgrand.enlive-html :as en]))
 
-(def index (en/html-resource "public/index.html"))
+(do-template [name] 
+    (def name (en/html-resource (str "public/"  'name ".html")))
+      index upload-form access-form admin-form login-form) 
 
-(def upload-form (en/html-resource "public/upload-form.html")) 
+(do-template [name] 
+  (deftemplate name (str "public/" 'name ".html") [title body]
+	[:body] (en/content body) 
+	[:title] (en/content title))
+      forms-layout general-layout admin-layout)
 
-(def access-form (en/html-resource "public/access-form.html")) 
-
-(def admin-form (en/html-resource "public/admin-form.html")) 
-
-(def login-form (en/html-resource "public/login-form.html")) 
-
-(deftemplate forms-layout "public/forms-layout.html" [title body]
-		[:body] (en/content body) 
-		[:title] (en/content title))
-
-(deftemplate general-layout "public/general-layout.html" [title body]
-		[:body] (en/content body) 
-		[:title] (en/content title))
-
-(deftemplate admin-layout "public/admin-layout.html" [title body]
-		[:body] (en/content body) 
-		[:title] (en/content title))
 
 (defn render
 	([t title] (->> t (general-layout title) (apply str)))
@@ -39,6 +30,23 @@
 		  		  (en/do-> 
 		  		    (en/content repo)
 		  		    (en/set-attr :value repo)))))
+
+(defn 
+  ^{:test (fn []
+		 (with-errors upload-form [[:email ["this is a required field"]]])
+			)} 
+  with-errors [form errors]
+    (if-let [pair (first errors)]
+       (with-errors 
+         (at form 
+         	 [(keyword (str "input#" (-> pair first name)))] (set-attr :class "error")
+         	 [( attr= :for  (-> pair first name))] (en/content (-> pair second flatten))
+         	  
+         	 )
+         (rest errors)) 
+       form 
+      ))
+
 
 (defn request-as-json [req]
    (json/json-str (assoc req :req-type (type req))))
@@ -64,8 +72,8 @@
 	    [:#description] (en/content desc))
 
 (def ssh-upload 
-     (form-success "Key uploaded successfully" 
-   		(list "You can now proceed to requesting access to " {:tag :a :attrs {:href "/access-form"} :content "repositories."})))
+   (form-success "Key uploaded successfully" 
+   	(list "You can now proceed to requesting access to " {:tag :a :attrs {:href "/access-form"} :content "repositories."})))
 
 
 (def request-submited (form-success "Access request submited" "An email will be sent to you once its approved."))
