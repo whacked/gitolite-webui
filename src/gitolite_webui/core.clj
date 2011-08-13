@@ -13,7 +13,6 @@
 
 (def *webdir* (str (ds/pwd) "/src/public"))
 
-(persist/initialize "gitolite-db")
 
 (defn process-ssh-upload [{:keys [name email file]}]
    (persist/persist-key-request name email (slurp (file :tempfile))))
@@ -51,6 +50,7 @@
 
 (defn -main []
    (conf/prod) 
+   (persist/initialize "gitolite-db")
    (def server (jet/run-jetty #'app  {:port 8081 :join? false})))
 
 (defn stop [] (. server stop))
