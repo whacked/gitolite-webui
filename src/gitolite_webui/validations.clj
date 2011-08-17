@@ -7,7 +7,7 @@
 
 (defn exists? [param]
     (validate-val param 
-    	(fn [param] (-> param :filename nil?)) {param ["A file must be selected!"]}))
+    	(fn [param] (-> param :tempfile (. exists))) {param ["A file must be selected!"]}))
 
 (def upload-validate
  (validations

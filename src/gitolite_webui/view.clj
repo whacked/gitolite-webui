@@ -32,17 +32,13 @@
 		  		    (en/set-attr :value repo)))))
 
 (defn 
-  ^{:test (fn []
-		 (with-errors upload-form [[:email ["this is a required field"]]])
-			)} 
+  ^{:test (fn [] (with-errors upload-form [[:email ["this is a required field"]]]))} 
   with-errors [form errors]
     (if-let [pair (first errors)]
        (with-errors 
          (at form 
          	 [(keyword (str "input#" (-> pair first name)))] (set-attr :class "error")
-         	 [( attr= :for  (-> pair first name))] (en/content (-> pair second flatten))
-         	  
-         	 )
+         	 [(attr= :for (-> pair first name))] (en/content (-> pair second flatten)))
          (rest errors)) 
        form 
       ))
