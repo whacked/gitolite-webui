@@ -25,7 +25,8 @@
 	     (mp/wrap-multipart-params 
               (POST "/ssh-upload" {params :params} 
                 (if-let [errors (valid/upload-validate params)]
-                   (render forms-layout (with-errors upload-form params errors) "upload ssh key" ) 
+                   (render forms-layout 
+                   	   (-> upload-form (with-errors errors) (re-apply-params params)) "upload ssh key") 
                    (do (process-ssh-upload params) 
                      (render ssh-upload "ssh upload done")))))
 

@@ -43,7 +43,10 @@
        form 
       ))
 
-(defn re-apply-params [form params])
+(defn re-apply-params [form params]
+   (reduce 
+     (fn [f [k v]] 
+   	  (at f [(keyword (str "input#" (name k)))] (set-attr :value v))) form params))
 
 
 (defn request-as-json [req]
