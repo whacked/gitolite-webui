@@ -9,9 +9,13 @@
     [gitolite-webui.gitolite :as git]
     [net.cgrand.enlive-html :as en]))
 
-(do-template [name title] 
-    (def name (with-meta (en/html-resource (str "public/"  'name ".html")) {:title title}))
-      index "Gitolite webui" upload-form "Upload ssh key" access-form "Request repository access" admin-form "Approve requests" login-form "Login to admin") 
+(do-template [name meta] 
+    (def name (with-meta (en/html-resource (str "public/"  'name ".html")) meta))
+      index {:title "Gitolite webui" :layout general-layout}
+      upload-form {:title "Upload ssh key" :layout forms-layout}
+      access-form {:title "Request repository access" :layout forms-layout}
+      admin-form {:title "Approve requests" :layout admin-layout}
+      login-form {:title "Login to admin" :layout forms-layout}) 
 
 (do-template [name] 
   (deftemplate name (str "public/" 'name ".html") [title body]
@@ -80,5 +84,4 @@
 	{:title "request submited"}))
 
 (defn render
-	([t] (->> t (general-layout (-> t meta :title)) (apply str))) 
-	([layout t] (->> t (layout (-> t meta :title)) (apply str))))
+	([t] (->> t ((-> t meta :layout) (-> t meta :title)) (apply str))))

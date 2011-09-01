@@ -17,22 +17,21 @@
            (GET  "/" [] (render index))
 
 	     (GET "/upload-form" [] 
-	     	    (render forms-layout upload-form))
+	     	    (render upload-form))
 
-	     (GET "/access-form" [] (render forms-layout (access-form-inc-repos))) 
+	     (GET "/access-form" [] (render (access-form-inc-repos))) 
 
-	     (GET "/login-form" [] (render forms-layout login-form )) 
+	     (GET "/login-form" [] (render login-form )) 
 
 	     (GET "/admin-requests" {session :session}
 	     	    (if (session :user) 
-	     	    	 (render admin-layout (admin-form-with-data))
+	     	    	 (render (admin-form-with-data))
 	     	       (res/redirect "/login-form"))) 
 
 	     (mp/wrap-multipart-params 
               (POST "/ssh-upload" {params :params} 
                 (if-let [errors (valid/upload-validate params)]
-                   (render forms-layout 
-                     (-> upload-form (with-errors errors) (re-apply-params params))) 
+                   (render (-> upload-form (with-errors errors) (re-apply-params params))) 
                    (do (process-ssh-upload params) 
                      (render ssh-upload)))))
 
