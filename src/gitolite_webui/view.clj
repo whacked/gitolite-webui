@@ -9,9 +9,9 @@
     [gitolite-webui.gitolite :as git]
     [net.cgrand.enlive-html :as en]))
 
-(do-template [name] 
-    (def name (en/html-resource (str "public/"  'name ".html")))
-      index upload-form access-form admin-form login-form) 
+(do-template [name title] 
+    (def name (with-meta (en/html-resource (str "public/"  'name ".html")) {:title title}))
+      index "Gitolite webui" upload-form "Upload ssh key" access-form "Request repository access" admin-form "Approve requests" login-form "Login to admin") 
 
 (do-template [name] 
   (deftemplate name (str "public/" 'name ".html") [title body]
@@ -20,16 +20,13 @@
       forms-layout general-layout admin-layout)
 
 
-(defn render
-	([t title] (->> t (general-layout title) (apply str)))
-	([layout t title] (->> t (layout title) (apply str))))
 
 (defn access-form-inc-repos []
-  (en/transform access-form [:option] 
+  (with-meta (en/transform access-form [:option] 
       (en/clone-for [repo (git/repos)]
 		  		  (en/do-> 
 		  		    (en/content repo)
-		  		    (en/set-attr :value repo)))))
+		  		    (en/set-attr :value repo)))) (meta access-form)))
 
 (defn 
   ^{:test (fn [] (with-errors upload-form [[:email ["this is a required field"]]]))} 
@@ -62,11 +59,11 @@
    (map #(request-option %) (concat (ssh-pending) (access-pending))))
 
 (defn admin-form-with-data  []
-  (en/transform admin-form [:option] 
+  (with-meta (en/transform admin-form [:option] 
       (en/clone-for [req (requests) :let [[s val] req]]
 		  		  (en/do-> 
 		  		    (en/content s)
-		  		    (en/set-attr :value val)))))
+		  		    (en/set-attr :value val)))) (meta admin-form)))
 
 (defsnippet form-success "public/form-success.html" [:#wrapper] [title desc]
 	    [:h1] (en/content title)
@@ -77,4 +74,11 @@
    	(list "You can now proceed to requesting access to " {:tag :a :attrs {:href "/access-form"} :content "repositories."})))
 
 
-(def request-submited (form-success "Access request submited" "An email will be sent to you once its approved."))
+(def request-submited 
+     (with-meta  
+	  (form-success "Access request submited" "An email will be sent to you once its approved.") 
+	{:title "request submited"}))
+
+(defn render
+	([t] (->> t (general-layout (-> t meta :title)) (apply str))) 
+	([layout t] (->> t (layout (-> t meta :title)) (apply str))))

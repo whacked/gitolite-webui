@@ -11,28 +11,34 @@
 (defn process-ssh-upload [{:keys [name email file]}]
    (persist/persist-key-request name email (slurp (file :tempfile))))
  
+
+
 (defroutes main-routes
-           (GET  "/" [] (render index "gitolite webui"))
+           (GET  "/" [] (render index))
+
 	     (GET "/upload-form" [] 
-	     	    (render forms-layout upload-form "upload ssh key"))
-	     (GET "/access-form" [] (render forms-layout (access-form-inc-repos) "request repository access")) 
-	     (GET "/login-form" [] (render forms-layout login-form "Login to admin")) 
+	     	    (render forms-layout upload-form))
+
+	     (GET "/access-form" [] (render forms-layout (access-form-inc-repos))) 
+
+	     (GET "/login-form" [] (render forms-layout login-form )) 
+
 	     (GET "/admin-requests" {session :session}
 	     	    (if (session :user) 
-	     	    	 (render admin-layout (admin-form-with-data) "approve requests")
+	     	    	 (render admin-layout (admin-form-with-data))
 	     	       (res/redirect "/login-form"))) 
 
 	     (mp/wrap-multipart-params 
               (POST "/ssh-upload" {params :params} 
                 (if-let [errors (valid/upload-validate params)]
                    (render forms-layout 
-                   	   (-> upload-form (with-errors errors) (re-apply-params params)) "upload ssh key") 
+                     (-> upload-form (with-errors errors) (re-apply-params params))) 
                    (do (process-ssh-upload params) 
-                     (render ssh-upload "ssh upload done")))))
+                     (render ssh-upload)))))
 
            (POST "/access-request" [name repo]
                 (persist/persist-repo-request name repo)
-                (render request-submited "request submited"))
+                (render request-submited))
 
            (POST "/login" [name pass session] 
            	     (if (and (-> pass nil? not) (.equals pass (admins name))) 
