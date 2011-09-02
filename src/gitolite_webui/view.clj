@@ -73,7 +73,7 @@
 
 (def ssh-upload 
   (with-meta 
-   (form-success "Key uploaded successfully" 
+    (form-success "Key uploaded successfully" 
    	(list "You can now proceed to requesting access to "
    	  {:tag :a :attrs {:href "/access-form"} :content "repositories."}))
        {:title "Upload done" :layout general-layout}))

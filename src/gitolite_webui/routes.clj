@@ -36,12 +36,14 @@
 	     (mp/wrap-multipart-params 
               (POST "/ssh-upload" {params :params} 
                (validate upload-form params valid/upload-validate 
-               	#(do (process-ssh-upload params) 
-                       (render ssh-upload)))))
+               	(fn [] (process-ssh-upload params) 
+                    (render ssh-upload)))))
 
-           (POST "/access-request" [name repo]
-                (persist/persist-repo-request name repo)
-                (render request-submited))
+           (POST "/access-request" [name repo :as {params :params}] 
+           	  (validate (access-form-inc-repos) params valid/access-validate
+               (fn [] (persist/persist-repo-request name repo) 
+                 (render request-submited)))
+              )
 
            (POST "/login" [name pass session] 
            	     (if (and (-> pass nil? not) (.equals pass (admins name))) 

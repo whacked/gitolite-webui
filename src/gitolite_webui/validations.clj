@@ -18,4 +18,6 @@
     (validate-val :email str/looks-like-email?
                   {:email ["must contain an @ sign, and a dot in the domain name"]}))))
 
-
+(def access-validate
+    (validations
+      (required :name)))
