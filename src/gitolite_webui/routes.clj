@@ -11,7 +11,12 @@
 (defn process-ssh-upload [{:keys [name email file]}]
    (persist/persist-key-request name email (slurp (file :tempfile))))
  
-
+(defn validate [form validation succ]
+  (if-let [errors (validation params)]
+          (render 
+          	(with-meta 
+          	  (-> form (with-errors errors) (re-apply-params params)) (meta form))) 
+           (succ)))
 
 (defroutes main-routes
            (GET  "/" [] (render index))
@@ -30,10 +35,10 @@
 
 	     (mp/wrap-multipart-params 
               (POST "/ssh-upload" {params :params} 
-                (if-let [errors (valid/upload-validate params)]
-                   (render (-> upload-form (with-errors errors) (re-apply-params params))) 
-                   (do (process-ssh-upload params) 
-                     (render ssh-upload)))))
+               (validate upload-form 
+               	#(valid/upload-validate params) 
+                  #(do (process-ssh-upload params) 
+                       (render ssh-upload)))))
 
            (POST "/access-request" [name repo]
                 (persist/persist-repo-request name repo)

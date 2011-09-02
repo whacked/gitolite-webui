@@ -5,17 +5,10 @@
     [clojure.template :only [do-template]] 
      clojure.contrib.strint) 
   (:require 
+    (clojure.contrib [error-kit :as kit]) 
     [clojure.contrib.json :as json]
     [gitolite-webui.gitolite :as git]
     [net.cgrand.enlive-html :as en]))
-
-(do-template [name meta] 
-    (def name (with-meta (en/html-resource (str "public/"  'name ".html")) meta))
-      index {:title "Gitolite webui" :layout general-layout}
-      upload-form {:title "Upload ssh key" :layout forms-layout}
-      access-form {:title "Request repository access" :layout forms-layout}
-      admin-form {:title "Approve requests" :layout admin-layout}
-      login-form {:title "Login to admin" :layout forms-layout}) 
 
 (do-template [name] 
   (deftemplate name (str "public/" 'name ".html") [title body]
@@ -23,7 +16,13 @@
 	[:title] (en/content title))
       forms-layout general-layout admin-layout)
 
-
+(do-template [name meta] 
+    (def name (with-meta (en/html-resource (str "public/"  'name ".html")) meta))
+      index {:title "Gitolite webui" :layout general-layout}
+      upload-form {:title "Upload ssh key" :layout forms-layout}
+      access-form {:title "Request repository access" :layout forms-layout}
+      admin-form {:title "Approve requests" :layout admin-layout}
+      login-form {:title "Login to admin" :layout forms-layout})
 
 (defn access-form-inc-repos []
   (with-meta (en/transform access-form [:option] 
@@ -49,7 +48,6 @@
      (fn [f [k v]] 
    	  (at f [(keyword (str "input#" (name k)))] (set-attr :value v))) form params))
 
-
 (defn request-as-json [req]
    (json/json-str (assoc req :req-type (type req))))
 
@@ -74,14 +72,23 @@
 	    [:#description] (en/content desc))
 
 (def ssh-upload 
+  (with-meta 
    (form-success "Key uploaded successfully" 
-   	(list "You can now proceed to requesting access to " {:tag :a :attrs {:href "/access-form"} :content "repositories."})))
-
+   	(list "You can now proceed to requesting access to "
+   	  {:tag :a :attrs {:href "/access-form"} :content "repositories."}))
+       {:title "Upload done" :layout general-layout}))
 
 (def request-submited 
-     (with-meta  
-	  (form-success "Access request submited" "An email will be sent to you once its approved.") 
-	{:title "request submited"}))
+   (with-meta  
+     (form-success "Access request submited" "An email will be sent to you once its approved.") 
+        {:title "request submited" :layout general-layout}))
 
-(defn render
-	([t] (->> t ((-> t meta :layout) (-> t meta :title)) (apply str))))
+(kit/deferror *missing-meta*[] [m]
+    {:msg m
+     :unhandled (kit/throw-msg RuntimeException)}) 
+
+(defn render [t] 
+   (if-not (every? identity ((juxt :title :layout) (meta t)))
+     (kit/raise *missing-meta* "Missing :layout and :title meta on form")
+     (->> t ((-> t meta :layout) (-> t meta :title)) (apply str))))
+

@@ -10,7 +10,6 @@
 
 (def *webdir* (str (ds/pwd) "/src/public"))
 
-
 (def app (-> (handler/site routes/main-routes)))
 
 (defn -main []

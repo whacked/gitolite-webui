@@ -12,9 +12,10 @@
 (def upload-validate
  (validations
    (required :name)
+    (exists? :file)
    (validate-some
     (required :email)
     (validate-val :email str/looks-like-email?
-                  {:email ["must contain an @ sign, and a dot in the domain name"]}))
-   
-   (exists? :file)))
+                  {:email ["must contain an @ sign, and a dot in the domain name"]}))))
+
+
