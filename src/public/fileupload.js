@@ -20,18 +20,14 @@ function initFileUploads() {
                fakeInput.className='';
             }
            
-            fakeInput.value = x[i].getAttribute('value');
+            
 		x[i].className = 'file hidden';
 		
 		var clone = fakeFileUpload.cloneNode(true);
 		x[i].parentNode.appendChild(clone);
 		x[i].relatedElement = clone.getElementsByTagName('input')[0];
-		x[i].onchange = x[i].onmouseout = function () {
-                if(this.value){
-			this.relatedElement.value = this.value;
-               } else {
-			this.relatedElement.value = this.getAttribute('value');
-               }
+		x[i].onchange = x[i].onmouseout = function () { 
+			this.relatedElement.value = this.value; 
 		}
 	}
 }
