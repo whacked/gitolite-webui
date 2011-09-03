@@ -2,11 +2,11 @@
     (:import (java.util Timer TimerTask))
     (:use [clojure.contrib.io :only (file)])
     (:require 
-	[clojure.contrib.json :as json]
-	[clojure.contrib.datalog.database :as dlog]))
+     [clojure.contrib.json :as json]
+     [clojure.contrib.datalog.database :as dlog]))
 
 (defn save [db-file db]
-	(spit (file db-file) (json/json-str @db)))
+  (spit (file db-file) (json/json-str @db)))
 
 (def timer (atom (Timer.)))
 
@@ -19,12 +19,11 @@
 
 (defn- db-map-tuples [db-map]
 	 (filter (comp not empty?) 
-		(reduce (fn [acc relation] (concat acc (tuples-of relation))) [] (into [] db-map))))
+		   (reduce (fn [acc relation] (concat acc (tuples-of relation))) [] (into [] db-map))))
 
 (defn reload [db-file db]
-	(if (-> db-file (file) (. exists))
-	  (let [db-map (json/read-json (slurp (file db-file))) ]
-	    (doseq [tuple (db-map-tuples db-map)] 
-		     (dosync (alter db 
-			 	  (fn [db] (dlog/add-tuple db (first tuple) (second tuple)))))))))
+  (if (-> db-file (file) (. exists))
+    (let [db-map (json/read-json (slurp (file db-file))) ]
+	(doseq [tuple (db-map-tuples db-map)] 
+		 (dosync (alter db (fn [db] (dlog/add-tuple db (first tuple) (second tuple)))))))))
 
