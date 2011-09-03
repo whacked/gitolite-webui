@@ -46,11 +46,11 @@
 			     (render request-submited)))
 		     )
 
-	     (POST "/login" [name pass session] 
-		     (if (and (-> pass nil? not) (.equals pass (admins name))) 
-			 (assoc (res/redirect "/admin-requests") :session (assoc session :user name) )  
-			 "Failed to login"
-			 )) 
+	     (POST "/login" [user pass session :as {params :params}] 
+		     (validate login-form params valid/login-validate
+			  (fn [] (if (.equals pass (admins user)) 
+				     (assoc (res/redirect "/admin-requests") :session (assoc session :user user) )  
+					"Failed to login")))) 
 
 	     (p/wrap-params 
 		 (POST "/process-requests" {params :params form-params :form-params} 

@@ -21,3 +21,11 @@
 (def access-validate
      (validations
 	 (required :name)))
+
+
+(def login-validate
+     (validations
+	 (required :user) 
+	 (required :pass)
+	 )    
+     )
