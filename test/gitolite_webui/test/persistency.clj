@@ -11,4 +11,5 @@
 (fact (p/access-pending) => (just (list {:name "ronen" :repo "play-0" }))
 	(against-background (before :checks (p/persist-repo-request "ronen" "play-0"))))
 
+(fact (p/diff-watcher identity nil {} {:repo-request {:data #{{:name "ronen"}}}} {:repo-request {:data #{}}})  => (just #{{:name "ronen"}}) )
 
