@@ -9,6 +9,7 @@
                  [midje "1.1.1"]
                  [clj-decline "0.0.5"]
                  [pretzel "0.2.2"]
+                 [org.apache.commons/commons-email "1.2"]
                  [fs "0.8.1"]]
 
   
