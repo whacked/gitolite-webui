@@ -69,13 +69,13 @@
 		     (map (fn [[match line]] (nil? (re-find match line))) 
 			    (partition 2 (interleave windows-key-mathces lines)))))))
 
-(defn format [key]
+(defn formatk [key]
   (if (windows-format-key? key)
     (convert-windows key) 
     key
     ))
 
 (defn add-key [{:keys [name key]}]
-  (let [formated-key (format key)]
+  (let [formated-key (formatk key)]
     (spit (resolve-path (str "keydir/" name ".pub" )) key)
     ))

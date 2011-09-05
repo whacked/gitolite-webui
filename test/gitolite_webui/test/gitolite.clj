@@ -34,7 +34,7 @@
    (fact (g/windows-format-key? (slurp "test/resources/id_rsa.pub")) => true)  
    (fact (g/convert-windows (slurp "test/resources/id_rsa.pub") "bob@host") => (slurp "test/resources/id_rsa_converted.pub")))
 
-(fact (g/format ...unix-key...) => ...unix-key...
+(fact (g/formatk ...unix-key...) => ...unix-key...
    (provided 
      (g/windows-format-key? ...unix-key...) => false
      ))
