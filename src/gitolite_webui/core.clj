@@ -19,3 +19,7 @@
 
 (defn stop [] (. server stop))
 
+(defn restart []
+ (stop) 
+ (-main)
+  )

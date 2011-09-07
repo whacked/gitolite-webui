@@ -14,7 +14,9 @@
 
 
 (defonce- db (ref (dlog/make-database 
-			  (relation :key-request [:name :email :key])
+			  (relation :contact [:name :email])
+			  (index :contact :name)
+			  (relation :key-request [:name :key])
 			  (index :key-request :name)
 			  (relation :repo-request [:name :repo]) 
 			  (index :repo-request :name))))
@@ -24,6 +26,7 @@
 
 (defn- notify-user [to subject body]
    (let [{:keys [user pass host port ssl]} (:email @config)]
+     (println (:email @config))
      (doto (SimpleEmail.)
      	  (.setHostName host) 
         (.setSmtpPort port)
@@ -36,13 +39,16 @@
         (.send) 
         )))
 
-(defn- notify-approved [approved]
-   (notify-user "gookup@gmail.com" "its been aproved" "congrated approved"))
+
+(defn notify-approved [approved]
+  (doseq [a approved :let [email (get-in @db [:contact :data (a :name)] )]] 
+    (notify-user email "its been aproved" "congrated approved")))
 
 (defn diff-watcher [action key ref old new]
   "apply action on difference found"
   (let [approved (apply difference (map #(get-in % [:repo-request :data]) [old new]))]
-    (action approved)))
+    (when (not-empty approved) 
+    	(action approved))))
 
 (defn initialize [db-file]
   "initializes persistency"
@@ -57,7 +63,10 @@
 	 (dlog/add-tuple db relation request))
 
 (defn persist-key-request [name email key]
-  (dosync (alter db add-request :key-request {:name name :email email :key key })))
+  (dosync 
+     (alter db add-request :key-request {:name name :key key })
+     (alter db add-request :contact {:name name :email email })
+     ))
 
 (defn access-pending []
   (-> @db :repo-request :data (apply-type :repo-request)))
