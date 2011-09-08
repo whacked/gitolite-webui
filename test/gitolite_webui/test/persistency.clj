@@ -15,3 +15,4 @@
 
 (fact (p/diff-watcher identity nil {} nil {:repo-request {:data #{{:name "ronen"}}}} )  => nil )
 
+(fact (p/notify-user "bla@bla" "subjet" "body" {:email {:user nil :pass "xyz" :host "" :port 5 :ssl false}}) => (throws java.lang.AssertionError))

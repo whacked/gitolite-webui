@@ -3,13 +3,13 @@
      [clojure.contrib.datalog.database :as dlog]
      [gitolite-webui.db :as db])
     (:import 
-     (org.apache.commons.mail SimpleEmail DefaultAuthenticator)  
-     )
+     (org.apache.commons.mail SimpleEmail DefaultAuthenticator))
     (:use 
      gitolite-webui.config
      [clojure.contrib.io :only (file)]
      [clojure.contrib.def :only (defonce-)]
      [clojure.set :only (difference)] 
+     [trammel.core :only (defconstrainedfn)] 
      ))
 
 
@@ -24,9 +24,9 @@
 (defn- apply-type [rel t]
   (map #(with-meta % {:type t}) rel ))
 
-(defn- notify-user [to subject body]
-   (let [{:keys [user pass host port ssl]} (:email @config)]
-     (println (:email @config))
+(defconstrainedfn notify-user [to subject body config]
+    [(every? (comp not empty?) ((juxt :user :pass :host) (:email config)))]
+   (let [{:keys [user pass host port ssl]} (:email config)]
      (doto (SimpleEmail.)
      	  (.setHostName host) 
         (.setSmtpPort port)
@@ -42,7 +42,7 @@
 
 (defn notify-approved [approved]
   (doseq [a approved :let [email (get-in @db [:contact :data (a :name)] )]] 
-    (notify-user email "its been aproved" "congrated approved")))
+    (notify-user email "its been aproved" "congrated approved" @config)))
 
 (defn diff-watcher [action key ref old new]
   "apply action on difference found"
