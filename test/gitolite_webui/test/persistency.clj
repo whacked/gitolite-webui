@@ -15,4 +15,7 @@
 
 (fact (p/diff-watcher identity nil {} nil {:repo-request {:data #{{:name "ronen"}}}} )  => nil )
 
-(fact (p/notify-user "bla@bla" "subjet" "body" {:email {:user nil :pass "xyz" :host "" :port 5 :ssl false}}) => (throws java.lang.AssertionError))
+(fact 
+  (p/notify-user-constrained "bla@bla" "subjet" "body" {:email {:user nil :pass "xyz" :host "" :port 5 :ssl false}}) => (throws java.lang.AssertionError)
+  (p/notify-user-constrained nil "subjet" "body" {:email {:user "bla" :pass "xyz" :host "google" :port 5 :ssl false}}) => (throws java.lang.AssertionError)
+  )

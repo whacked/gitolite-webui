@@ -1,19 +1,22 @@
 (ns gitolite-webui.persistency
     (:require 
-     [clojure.contrib.datalog.database :as dlog]
+     [clojure.contrib.datalog.database :as dblog]
      [gitolite-webui.db :as db])
     (:import 
      (org.apache.commons.mail SimpleEmail DefaultAuthenticator))
     (:use 
      gitolite-webui.config
+     gitolite-webui.trammel-checks
+     gitolite-webui.debug
      [clojure.contrib.io :only (file)]
+     [clojure.contrib.datalog.rules :only (<- ?- rules-set)]
      [clojure.contrib.def :only (defonce-)]
      [clojure.set :only (difference)] 
-     [trammel.core :only (defconstrainedfn)] 
+     [trammel.core :only (with-constraints contract)] 
      ))
 
 
-(defonce- db (ref (dlog/make-database 
+(defonce- db (ref (dblog/make-database 
 			  (relation :contact [:name :email])
 			  (index :contact :name)
 			  (relation :key-request [:name :key])
@@ -22,33 +25,43 @@
 			  (index :repo-request :name))))
 
 (defn- apply-type [rel t]
-  (map #(with-meta % {:type t}) rel ))
+	 (map #(with-meta % {:type t}) rel ))
 
-(defconstrainedfn notify-user [to subject body config]
-    [(every? (comp not empty?) ((juxt :user :pass :host) (:email config)))]
+(defn- notify-user [to subject body config]
    (let [{:keys [user pass host port ssl]} (:email config)]
      (doto (SimpleEmail.)
-     	  (.setHostName host) 
-        (.setSmtpPort port)
-        (.setAuthenticator (DefaultAuthenticator. user  pass))
-        (.setTLS ssl)
-        (.setFrom "gookup@gmail.com")
-        (.setSubject subject)
-        (.setMsg body)
-        (.addTo to)
-        (.send) 
-        )))
+	 (.setHostName host) 
+	 (.setSmtpPort port)
+	 (.setAuthenticator (DefaultAuthenticator. user  pass))
+       (.setTLS ssl)
+       (.setFrom "gookup@gmail.com")
+       (.setSubject subject)
+       (.setMsg body)
+       (.addTo to)
+       (.send))))
 
+(def notify-user-contract 
+     (contract notify-user-constraints 
+		   "defines constraints for notify-user"
+		   [to subject body config] 
+		   [(non-nil-params notify-user) 
+		    (keys-not-empty (:email config) :user :pass :host)
+		    ]))
+
+(def notify-user-constrained (with-constraints notify-user notify-user-contract))
+
+(defn user-email [req]
+ (->  (dblog/select @db :contact {:name (req :name)}) first :email))
 
 (defn notify-approved [approved]
-  (doseq [a approved :let [email (get-in @db [:contact :data (a :name)] )]] 
-    (notify-user email "its been aproved" "congrated approved" @config)))
+  (doseq [a approved :let [email (user-email a)]] 
+	   (notify-user-constrained email "its been aproved" "congrated approved" @config)))
 
 (defn diff-watcher [action key ref old new]
   "apply action on difference found"
   (let [approved (apply difference (map #(get-in % [:repo-request :data]) [old new]))]
     (when (not-empty approved) 
-    	(action approved))))
+	(action approved))))
 
 (defn initialize [db-file]
   "initializes persistency"
@@ -60,13 +73,13 @@
   (-> @db :key-request :data (apply-type :key-request)))
 
 (defn- add-request [db relation request]
-	 (dlog/add-tuple db relation request))
+	 (dblog/add-tuple db relation request))
 
 (defn persist-key-request [name email key]
   (dosync 
-     (alter db add-request :key-request {:name name :key key })
-     (alter db add-request :contact {:name name :email email })
-     ))
+    (alter db add-request :key-request {:name name :key key })
+    (alter db add-request :contact {:name name :email email })
+    ))
 
 (defn access-pending []
   (-> @db :repo-request :data (apply-type :repo-request)))
@@ -75,6 +88,6 @@
   (dosync (alter db add-request :repo-request {:name name :repo repo })))
 
 (defn clear-request [req]
-  (dosync (alter db (fn [db] (dlog/remove-tuple db (type req) (dissoc req :req-type))))))
+  (dosync (alter db (fn [db] (dblog/remove-tuple db (type req) (dissoc req :req-type))))))
 
 
