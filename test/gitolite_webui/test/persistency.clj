@@ -11,9 +11,10 @@
 (fact (p/access-pending) => (just (list {:name "ronen" :repo "play-0" }))
 	(against-background (before :checks (p/persist-repo-request "ronen" "play-0"))))
 
-(fact (p/diff-watcher identity nil {} {:repo-request {:data #{{:name "ronen"}}}} {:repo-request {:data #{}}})  => (just #{{:name "ronen"}}) )
-
-(fact (p/diff-watcher identity nil {} nil {:repo-request {:data #{{:name "ronen"}}}} )  => nil )
+#_(fact 
+  (p/diff-watcher identity nil {} {:repo-request {:data #{{:name "ronen"}}}} {:repo-request {:data #{}}})  => (just #{{:name "ronen"}})
+  (p/diff-watcher identity nil {} nil {:repo-request {:data #{{:name "ronen"}}}} )  => nil 
+  )
 
 (fact 
   (p/notify-user-constrained "bla@bla" "subjet" "body" {:email {:user nil :pass "xyz" :host "" :port 5 :ssl false}}) => (throws java.lang.AssertionError)

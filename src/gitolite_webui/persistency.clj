@@ -55,13 +55,13 @@
 
 (defn notify-approved [approved]
   (doseq [a approved :let [email (user-email a)]] 
-	   (notify-user-constrained email "its been aproved" "congrated approved" @config)))
+	   (notify-user-constrained email "Your request has been approved" "congrated approved" @config)))
 
-(defn diff-watcher [action key ref old new]
-  "apply action on difference found"
-  (let [approved (apply difference (map #(get-in % [:repo-request :data]) [old new]))]
-    (when (not-empty approved) 
-	(action approved))))
+(defn diff-watcher [action key ref old-db new-db]
+  "apply action on approved requests (difference found between old and new)."
+  (let [[old-req new-req] (map #((juxt (comp :data :repo-request) (comp :data :key-request)) %) [old-db new-db])]
+    (doseq [[o n] (map list old-req new-req) :let [approved (difference o n)] :when (not-empty approved)] 
+      (action approved))))
 
 (defn initialize [db-file]
   "initializes persistency"
