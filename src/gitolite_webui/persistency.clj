@@ -22,14 +22,15 @@
 (defn- apply-type [rel t]
   (map #(with-meta % {:type t}) rel ))
 
-(defn diff-watcher [action enrich key ref old-db new-db]
+(defn- user-email [req]
+  (assoc req :email (-> (dblog/select @db :contact {:name (req :name)}) first :email)))
+
+(defn diff-watcher [action enrich ref key old-db new-db]
   "Apply action on enriched approved requests (difference found between old and new)."
   (let [[old-req new-req] (map #((juxt (comp :data :repo-request) (comp :data :key-request)) %) [old-db new-db])]
     (doseq [[o n] (map list old-req new-req) :let [approved (difference o n)] :when (not-empty approved)] 
       (action (map enrich approved)))))
 
-(defn- user-email [req]
- (assoc req :email (-> (dblog/select @db :contact {:name (req :name)}) first :email)))
 
 (defn initialize [db-file]
   "Initializes persistency"
@@ -42,9 +43,8 @@
 
 (defn- add-request [db relation request]
 	 "Adds a request to the db, in case that a request with same name exists it will be replaced"
-	(if-let [existing (first (dblog/select db relation {:name (request :name)}))]
-        (dblog/add-tuple 
-          (dblog/remove-tuple db relation existing) relation request)
+	 (if-let [existing (first (dblog/select db relation {:name (request :name)}))]
+        (dblog/add-tuple (dblog/remove-tuple db relation existing) relation request)
         (dblog/add-tuple db relation request)))
 
 (defn persist-key-request [name email key]

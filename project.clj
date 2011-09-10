@@ -11,6 +11,7 @@
                  [pretzel "0.2.2"]
                  [org.apache.commons/commons-email "1.2"]
                  [trammel "0.6.0-SNAPSHOT"]
+                 [match "0.2.0-SNAPSHOT"]
                  [fs "0.8.1"]]
 
   

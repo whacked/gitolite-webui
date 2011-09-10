@@ -3,6 +3,7 @@
       gitolite-webui.trammel-checks
       gitolite-webui.config
       clojure.contrib.strint
+      [match.core :only (match)]
       [trammel.core :only (with-constraints contract)])
     (:import 
      (org.apache.commons.mail SimpleEmail DefaultAuthenticator)))
@@ -31,11 +32,13 @@
 
 (def notify-user-constrained (with-constraints notify-user notify-user-contract))
 
-(defmulti email-request type)
-(defmethod email-request :key-request [req]
-   (notify-user-constrained (:email req) "Your key request in gitolite was approved" (<< "Please verify that your public key matches ~(:key req)") @config))
-(defmethod email-request :repo-request [req]
-  (notify-user-constrained (:email req) "Your repository access request has been approved" (<< "Verify that you can access it by cloning ~(:repo req) repository.") @config))
+(defn email-request [req]
+  (match [req]
+    [{:name _ :repo (r :when (comp not nil?)) :email e}] 
+       (notify-user-constrained e "Your repository access request has been approved" (<< "Verify that you can access it by cloning ~(:repo req) repository.") @config)
+    [{:name _ :key _ :email e}] 
+       (notify-user-constrained e "Your key request in gitolite was approved" (<< "Please verify that your public key matches ~(:key req)") @config)
+    ))
 
 (defn email-approved [approved]
   (doseq [req approved] 
