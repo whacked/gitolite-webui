@@ -11,12 +11,11 @@
 (fact (p/access-pending) => (just (list {:name "ronen" :repo "play-0" }))
 	(against-background (before :checks (p/persist-repo-request "ronen" "play-0"))))
 
-#_(fact 
-  (p/diff-watcher identity nil {} {:repo-request {:data #{{:name "ronen"}}}} {:repo-request {:data #{}}})  => (just #{{:name "ronen"}})
-  (p/diff-watcher identity nil {} nil {:repo-request {:data #{{:name "ronen"}}}} )  => nil 
-  )
+(deftest diff-watcher-test
+  (let [result (atom nil)]
+    (letfn [(action [a] (reset! result a)) (enrich [a] (assoc a :email "bla"))]
+	(p/diff-watcher action enrich nil {} nil {:repo-request {:data #{{:name "ronen"}}}}) 
+      (is (= @result nil))
+      (p/diff-watcher action enrich nil {} {:repo-request {:data #{{:name "ronen"}}}} {:repo-request {:data #{}}}) 
+	(is (= @result '({:name "ronen" :email "bla"}))))))
 
-(fact 
-  (p/notify-user-constrained "bla@bla" "subjet" "body" {:email {:user nil :pass "xyz" :host "" :port 5 :ssl false}}) => (throws java.lang.AssertionError)
-  (p/notify-user-constrained nil "subjet" "body" {:email {:user "bla" :pass "xyz" :host "google" :port 5 :ssl false}}) => (throws java.lang.AssertionError)
-  )
