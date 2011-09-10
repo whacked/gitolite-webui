@@ -41,8 +41,12 @@
   (-> @db :key-request :data (apply-type :key-request)))
 
 (defn- add-request [db relation request]
-	 "Adds a request to the db, in case that a similar key exists it will be replaced"
-	 (dblog/add-tuple db relation request))
+	 "Adds a request to the db, in case that a request with same name exists it will be replaced"
+	(if-let [existing (first  (dblog/select db relation {:name (request :name)}))]
+        (dblog/add-tuple 
+          (dblog/remove-tuple db relation existing) relation request)
+        (dblog/add-tuple db relation request)    
+	 ))
 
 (defn persist-key-request [name email key]
   (dosync 

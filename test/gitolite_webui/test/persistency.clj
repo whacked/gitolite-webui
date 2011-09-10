@@ -1,6 +1,6 @@
 (ns gitolite-webui.test.persistency
-    (:require [gitolite-webui.persistency :as p])
-    (:use clojure.test midje.sweet))
+    (:require [gitolite-webui.persistency :as p] [clojure.contrib.datalog.database :as dblog]) 
+    (:use clojure.test midje.sweet clojure.contrib.trace))
 
 (against-background [(before :facts (p/persist-key-request "ronen" "narkisr@gmail.com" "ssh-rsa 1234")) 
 			   (around :facts (let [typed-req (with-meta {:name "ronen" :key "ssh-rsa 1234" } {:type :key-request}) ] ?form))]
@@ -8,8 +8,13 @@
     (fact (p/clear-request typed-req)
     	    (p/ssh-pending) => (just '()))) 
 
-(fact (p/access-pending) => (just (list {:name "ronen" :repo "play-0" }))
-	(against-background (before :checks (p/persist-repo-request "ronen" "play-0"))))
+(fact (p/access-pending) => (just (list {:name "ronen" :repo "play-1" }))
+	(against-background 
+	  (before :checks 
+	    (do 
+            (p/persist-repo-request "ronen" "play-0")
+		#_(dotrace [dblog/remove-tuple] ) 
+	  	(p/persist-repo-request "ronen" "play-1")))))
 
 (deftest diff-watcher-test
   (let [result (atom nil)]
