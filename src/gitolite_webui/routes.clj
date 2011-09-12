@@ -59,8 +59,8 @@
 			     (process/process-requests (vector requests))  
 			     (process/process-requests requests)  
 			     )) 
-			 "done"
-			 )) 
+                    (render requests-processed))) 
+
 	     (route/resources "/")
 	     (route/not-found "Page not found"))
 

@@ -83,6 +83,11 @@
 	 (form-success "Access request submited" "An email will be sent to you once its approved.") 
 	 {:title "request submited" :layout general-layout}))
 
+(def requests-processed
+     (with-meta  
+	 (form-success "Requests processed" "All selected requests were commited and marked as processed.") 
+	 {:title "requests processed" :layout general-layout}))
+
 (kit/deferror *missing-meta*[] [m]
 		  {:msg m
 		  :unhandled (kit/throw-msg RuntimeException)}) 
