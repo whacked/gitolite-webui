@@ -1,14 +1,15 @@
 (use 'cake 'cake.core
      '[cake.project :only [reload!]]
      '[bake.find-namespaces :only [find-namespaces-in-dir]])
-(import '[java.io File])
+(use 'clojure.java.io)
+(use ['fs :only '(copy-tree deltree mkdir)])
 
-(deftask midje
+(deftask midje #{playground}
   "Run midje and clojure.test tests"
   (bake (:use [bake.core :only [with-context]])
 	(:require [clojure test string])
-	[namespaces (concat (find-namespaces-in-dir (java.io.File. "test"))
-			    (find-namespaces-in-dir (java.io.File. "src")))]
+	[namespaces (concat (find-namespaces-in-dir (file "test"))
+			    (find-namespaces-in-dir (file "src")))]
 	(with-context :test
        	  ;; This turns off "Testing ...." lines, which I hate, especially
        	  ;; when there's no failure output.
@@ -55,3 +56,13 @@
        	 (println ">>> Midje summary:"))
        
        (println midje-failure-message midje-consolation)))))
+
+
+(deftask playground
+   "Sets up a gitolite playground that we can use during development" 
+   (let [dest (file "playground") test "test/resources/" conf (file test "conf") keys (file test "keydir")]
+         (-> dest deltree mkdir)
+         (copy-tree conf dest) 
+         (copy-tree keys dest) 
+        ))
+

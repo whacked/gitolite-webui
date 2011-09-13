@@ -5,12 +5,15 @@
     midje.sweet
     gitolite-webui.config
     [clojure.java.io :only (file copy delete-file)]  
+    [gitolite-webui.gitolite :only (git)]
     ))
 
 (def repo-home (@config :gitolite-home file))
 
 (defn set-repo[]
-  (fs/copy-tree (file "test/resources/") repo-home))
+  (fs/copy-tree (file "test/resources/") repo-home)
+  (git :init)  
+  )
 
 (defn cleanup [] 
    (fs/deltree repo-home))
@@ -39,4 +42,7 @@
      (g/windows-format-key? ...unix-key...) => false
      ))
 
-
+(against-background [(before :facts (set-repo)) (after :facts (cleanup))]
+   (fact (:out (git :status)) => (contains "new file:   conf/gitolite.conf")
+   	   (against-background (before :checks (git :add ["conf" "keydir"])))) 
+   )

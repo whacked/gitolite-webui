@@ -4,6 +4,7 @@
      [clojure.contrib.macros :only [letfn- ]]
      [clojure.string :only (replace-first)]
      [clojure.core :only [re-find]]
+     [clojure.java.shell :only [sh]]
      clojure.contrib.strint
      gitolite-webui.config 
      ))
@@ -79,3 +80,15 @@
   (let [formated-key (formatk key)]
     (spit (resolve-path (str "keydir/" name ".pub" )) key)
     ))
+
+(defn stage [files]
+  "Stages given files in git" 
+  (doseq [f files]
+  (sh "git" "add" file)))
+
+(defn git 
+  ([action]  (apply sh "git" (name action) [:dir (@config :gitolite-home)])) 
+  ([action args] (apply sh "git" (name action) (into args [:dir (@config :gitolite-home)])))
+  )
+
+
