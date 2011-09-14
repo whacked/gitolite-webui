@@ -12,8 +12,7 @@
 
 (defn set-repo[]
   (fs/copy-tree (file "test/resources/") repo-home)
-  (git :init)  
-  )
+  (git :init))
 
 (defn cleanup [] 
    (fs/deltree repo-home))
@@ -44,5 +43,12 @@
 
 (against-background [(before :facts (set-repo)) (after :facts (cleanup))]
    (fact (:out (git :status)) => (contains "new file:   conf/gitolite.conf")
-   	   (against-background (before :checks (git :add ["conf" "keydir"])))) 
+   	   (against-background (before :checks (git :add ["conf" "keydir"]))))
+   (fact (:out (git :log ["-n" "1"])) => (contains "lets play")
+   	   (against-background 
+   	       (before :checks 
+   	   	    (do 
+   	   		(fs/touch (str repo-home "bla"))
+   	   		(git :add [(str repo-home "bla")]) 
+   	   		(git :commit  ["-m" "lets play"])))))
    )
