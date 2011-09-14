@@ -6,8 +6,19 @@
      [clojure.core :only [re-find]]
      [clojure.java.shell :only [sh]]
      clojure.contrib.strint
+     clojure.contrib.logging
      gitolite-webui.config 
      ))
+
+(defn git 
+  ([action]  (git action [])) 
+  ([action args] 
+    (let [res (apply sh "git" (name action) (into args [:dir (@config :gitolite-home)]))]
+       (if (not= (:exit res) 0)
+          (error (:err res)) 
+          (info (:out res)))
+        res
+       )))
 
 (defn repo-name [repo-str]
   (last (re-matches #"repo\s+(.*)" repo-str)))
@@ -47,8 +58,11 @@
   (let [conf (slurp-conf) pattern (->> ["repo\\s+" repo] (apply str) re-pattern) match (re-find pattern conf)]
     (replace-first conf pattern (str match "\n" (perm-to-user name "RW+")))))
 
-(defn add-user-to-repo  [req]
-  (spit (gitoconf) (user-repo-manipulation req)))
+(defn add-user-to-repo  [{:keys [name repo] :as req} ]
+  (let [conf (gitoconf)]
+    (spit conf (user-repo-manipulation req)) 
+    (git :add ["conf"])  
+    (git :commit ["-m" (<< "Adding ~{name} to ~{repo}")])))
 
 (defn convert-windows [key host]
   (<< "ssh-rsa ~(apply str (drop-last (nthnext (.split key \"\\n\") 2))) ~{host}\n" ))
@@ -77,18 +91,14 @@
     ))
 
 (defn add-key [{:keys [name key]}]
-  (let [formated-key (formatk key)]
-    (spit (resolve-path (str "keydir/" name ".pub" )) key)
-    ))
+  (let [formated-key (formatk key) key-file (str "keydir/" name ".pub" )]
+    (spit (resolve-path key-file) key)
+    (git :add [key-file])
+    (git :commit ["-m" (<< "Adding key for ~{name}")])))
 
 (defn stage [files]
   "Stages given files in git" 
-  (doseq [f files]
-  (sh "git" "add" file)))
+  (doseq [f files] (sh "git" "add" file)))
 
-(defn git 
-  ([action]  (apply sh "git" (name action) [:dir (@config :gitolite-home)])) 
-  ([action args] (apply sh "git" (name action) (into args [:dir (@config :gitolite-home)])))
-  )
 
 
