@@ -56,8 +56,10 @@
 (defn access-pending []
   (-> @db :repo-request :data (apply-type :repo-request)))
 
-(defn persist-repo-request [name repo]
-  (dosync (alter db add-request :repo-request {:name name :repo repo })))
+(defn persist-repo-request [name repo email]
+  (dosync 
+    (alter db add-request :repo-request {:name name :repo repo })
+    (alter db add-request :contact {:name name :email email })))
 
 (defn clear-request [req]
   (dosync (alter db (fn [db] (dblog/remove-tuple db (type req) (dissoc req :req-type))))))

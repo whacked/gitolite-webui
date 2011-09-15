@@ -12,9 +12,8 @@
 	(against-background 
 	  (before :checks 
 	    (do 
-            (p/persist-repo-request "ronen" "play-0")
-		#_(dotrace [dblog/remove-tuple] ) 
-	  	(p/persist-repo-request "ronen" "play-1")))))
+            (p/persist-repo-request "ronen" "play-0" nil)
+	  	(p/persist-repo-request "ronen" "play-1" "bla@bla.com")))))
 
 (deftest diff-watcher-test
   (let [result (atom nil)]

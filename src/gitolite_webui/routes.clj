@@ -39,10 +39,11 @@
 				     (fn [] (process-ssh-upload params) 
 					   (render ssh-upload)))))
 
-	     (POST "/access-request" [name repo :as {params :params}] 
+	     (POST "/access-request" [name email repo :as {params :params}] 
 		     (validate 
 			 (access-form-inc-repos) params valid/access-validate
-			 (fn [] (persist/persist-repo-request name repo) 
+			 (fn [] 
+			     (persist/persist-repo-request name repo email) 
 			     (render request-submited)))
 		     )
 
