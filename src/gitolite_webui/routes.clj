@@ -44,8 +44,7 @@
 			 (access-form-inc-repos) params valid/access-validate
 			 (fn [] 
 			     (persist/persist-repo-request name repo email) 
-			     (render request-submited)))
-		     )
+			     (render request-submited))))
 
 	     (POST "/login" [user pass session :as {params :params}] 
 		     (validate login-form params valid/login-validate

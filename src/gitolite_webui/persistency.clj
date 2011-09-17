@@ -22,8 +22,10 @@
 (defn- apply-type [rel t]
   (map #(with-meta % {:type t}) rel ))
 
-(defn- user-email [req]
-  (assoc req :email (-> (dblog/select @db :contact {:name (req :name)}) first :email)))
+(defn user-email [req]
+  (-> (dblog/select @db :contact {:name (req :name)}) first :email))
+
+(defn- add-email [req] (assoc req :email (user-email req)))
 
 (defn diff-watcher [action enrich ref key old-db new-db]
   "Apply action on enriched approved requests (difference found between old and new)."
@@ -35,7 +37,7 @@
 (defn initialize [db-file]
   "Initializes persistency"
   (db/reload db-file db)
-  (add-watch db nil (partial diff-watcher email-approved user-email))
+  (add-watch db nil (partial diff-watcher email-approved add-email))
   (db/periodical-save db-file db 5)) 
 
 (defn ssh-pending [] 

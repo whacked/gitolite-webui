@@ -21,5 +21,4 @@
 
 (defn restart []
  (stop) 
- (-main)
-  )
+ (-main))
