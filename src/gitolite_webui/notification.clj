@@ -6,21 +6,26 @@
       [match.core :only (match)]
       [trammel.core :only (with-constraints contract)])
     (:import 
-     (org.apache.commons.mail SimpleEmail DefaultAuthenticator)))
+     (org.apache.commons.mail SimpleEmail DefaultAuthenticator EmailException)))
 
 
 (defn- notify-user [to subject body config]
-   (let [{:keys [user pass host port ssl]} (:email config)]
-     (doto (SimpleEmail.)
-	 (.setHostName host) 
-	 (.setSmtpPort port)
-	 (.setAuthenticator (DefaultAuthenticator. user  pass))
-       (.setTLS ssl)
-       (.setFrom "gookup@gmail.com")
-       (.setSubject subject)
-       (.setMsg body)
-       (.addTo to)
-       (.send))))
+	 (let [{:keys [user pass host port ssl]} (:email config)]
+	   (try
+	     (do (doto (SimpleEmail.)
+			    (.setHostName host) 
+			    (.setSmtpPort port)
+			    (.setAuthenticator (DefaultAuthenticator. user  pass))
+			    (.setTLS ssl)
+			    (.setFrom "gookup@gmail.com")
+			    (.setSubject subject)
+			    (.setMsg body)
+			    (.addTo to)
+			    (.send)) 
+		 (info (<< "Email send to ~{to}")))
+	     (catch EmailException e (error (str e to))) 
+	     ) 
+	   ))
 
 (def notify-user-contract 
      (contract notify-user-constraints 
@@ -34,16 +39,15 @@
 
 (defn email-request [req]
   (match [req]
-    [{:name _ :repo (r :when (comp not nil?)) :email e}] 
-       (notify-user-constrained e "Your repository access request has been approved" (<< "Verify that you can access it by cloning ~(:repo req) repository.") @config)
-    [{:name _ :key _ :email e}] 
-       (notify-user-constrained e "Your key request in gitolite was approved" (<< "Please verify that your public key matches ~(:key req)") @config)
-    ))
+	   [{:name _ :repo (r :when (comp not nil?)) :email e}] 
+	   (notify-user-constrained e "Your repository access request has been approved" (<< "Verify that you can access it by cloning ~(:repo req) repository.") @config)
+	   [{:name _ :key _ :email e}] 
+	   (notify-user-constrained e "Your key request in gitolite was approved" (<< "Please verify that your public key matches ~(:key req)") @config)
+	   ))
 
 (defn email-approved [approved]
-  (doseq [req approved] 
-    (email-request req)))
- 
+  (doall (pmap deref (for [req approved] (future (email-request req))))))
+
 
 
 
