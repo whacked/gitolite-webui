@@ -1,13 +1,13 @@
 # gitolite-webui
 
-FIXME: write description
+A simple webui to manage access to gitolite repositories.
 
 ## Usage
 
-FIXME: write
+TBD
 
 ## License
 
-Copyright (C) 2011 FIXME
+Copyright (C) 2011 narkisr@gmail.com
 
 Distributed under the Eclipse Public License, the same as Clojure.
