@@ -1,0 +1,3 @@
+[submodule "checkouts/match"]
+	path = checkouts/match
+	url = https://github.com/clojure/core.match.git
