@@ -1,4 +1,5 @@
 (ns gitolite-webui.core 
+    (:gen-class)
     (:use compojure.core)
     (:require 
       (ring.adapter [jetty :as jet])

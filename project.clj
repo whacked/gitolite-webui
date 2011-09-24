@@ -11,12 +11,11 @@
                  [pretzel "0.2.2"]
                  [org.apache.commons/commons-email "1.2"]
                  [trammel "0.6.0-SNAPSHOT"]
-                 [match "0.2.0-SNAPSHOT"]
                  [fs "0.8.1"]
                  [log4j "1.2.16"] 
                  ]
 
-  
+     :main gitolite-webui.core
      :dev-dependencies [[lein-ring "0.4.5"][lein-midje "1.0.3"] [fs "0.8.1"]]
      :ring {:handler gitolite-webui.core/app}
   )
