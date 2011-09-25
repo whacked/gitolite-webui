@@ -1,6 +1,6 @@
 (ns gitolite-webui.gitolite
     (:use [clojure.contrib.io :only [file]] 
-     [clojure.contrib.string :only [split-lines split as-str]]
+     [clojure.contrib.string :only [split-lines split as-str blank?]]
      [clojure.contrib.macros :only [letfn- ]]
      [clojure.string :only (replace-first)]
      [clojure.core :only [re-find]]
@@ -34,7 +34,7 @@
 
 (defn- raw-repos []
 	 (filter #(.startsWith (first %) "repo")
-		   (->> (slurp-conf) split-lines (partition-by empty?))))
+		   (->> (slurp-conf) split-lines (remove #(.startsWith % "#")) (partition-by blank?))))
 
 (defn permissions [lines]
   (let [pair (fn [line] (->> line (split #"\=") (map #(.trim %)) reverse (into [])))] 
