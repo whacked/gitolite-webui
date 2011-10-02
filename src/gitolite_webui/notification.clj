@@ -10,14 +10,14 @@
 
 
 (defn- notify-user [to subject body config]
-	 (let [{:keys [user pass host port ssl]} (:email config)]
+	 (let [{:keys [from user pass host port ssl]} (:email config)]
 	   (try
 	     (do (doto (SimpleEmail.)
 			    (.setHostName host) 
 			    (.setSmtpPort port)
 			    (.setAuthenticator (DefaultAuthenticator. user  pass))
 			    (.setTLS ssl)
-			    (.setFrom "gookup@gmail.com")
+			    (.setFrom from)
 			    (.setSubject subject)
 			    (.setMsg body)
 			    (.addTo to)
@@ -32,7 +32,7 @@
 		   "Defines constraints for notify-user"
 		   [to subject body config] 
 		   [(non-nil-params notify-user) 
-		    (keys-not-empty (:email config) :user :pass :host)
+		    (keys-not-empty (:email config) :host :from)
 		    ]))
 
 (def notify-user-constrained (with-constraints notify-user notify-user-contract))
