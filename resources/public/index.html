@@ -1,8 +1,57 @@
-<h1> Gitolite webui </h1>
-<p>Welcome to the git access page where you can manage your access to gitolite repositories, you can either:
-   <ul>
-	<li><a href="upload-form">Upload ssh key</a></li>
-	<li><a href="access-form">Request access to repository</a></li>
-	<li><a href="admin-requests">Admin requests</a></li>
-   </ul>
-</p>	
+<div class="topbar">
+  <div class="fill">
+    <div class="container">
+	<a class="brand" href="#">Gitolite webui</a>
+	<ul class="nav pull-right">
+	  <li class="active"><a href="/">Home</a></li>
+	  <li><a href="admin-requests">Admin</a></li>
+	  <li><a href="about">About</a></li>
+	</ul>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="hero-unit">
+    <h1>Gitolite webui</h1>
+    <p>Welcom to your one stop show for managing all of you access to git repositories, in order to gain access you need to upload your public key and then request access to specific repositories, once your requests are approved you will be notified via an email.
+    </p>
+
+  </div>
+
+  <div class="content">
+    <div class="row">
+        <div class="span7">
+          <h2>Upload public key</h2>
+	    <p>
+            <p>Public keys can be easily generated on Nix systems using: 
+	       <pre class="prettyprint">$ ssh-keygen </pre> 
+</p>	    
+
+           <p> Once the key is generated its located within:
+		 <pre class="prettyprint">$ ls ~/.ssh 
+   config   id_rsa  id_rsa.pub  known_hosts </pre> 
+		 id_rsa.pub is the one you need to upload, on Windows machine you may follow this  <a href="http://help.github.com/win-set-up-git/">guide</a>.
+		 </p>
+	    </p>
+          <p><a class="btn" href="upload-form">Upload &raquo;</a></p>
+        </div>
+
+        <div class="span8">
+          <h2>Access a repository</h2>
+           <p>In order to get a read/write access to a repository you will need to file a request first, you may select multiple repositories from which the admin approves.</p>
+	     <p>
+	       <a class="btn" href="access-form">Request Access &raquo;</a>
+	     </p>
+       </div>
+    </div>
+
+  <footer>
+  <p>&copy; <a href="http://narkisr.com">narkisr</a> 2011</p>
+
+  </footer>
+
+</div> <!-- /container -->
+
+
