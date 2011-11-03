@@ -1,29 +1,33 @@
-<form  class="form" action="access-request" method="post" accept-charset="utf-8"  >
-  <h1>Request repository access</h1>
-  <p>select which repository youd like to access</p>
+<div class="container">
+  <div class="row">
+    <form  class="form" action="access-request" method="post" accept-charset="utf-8"  >
+	<fieldset>
+	  <legend>Request repository access</legend>
+	  <p>select which repository you would like to access</p>
 
-  <p class="name">
-    <input type="text" name="name" id="name"/>
-    <label for="name"> User </label>
-  </p>
+	  <div class='name clearfix'>
+	    <label for="name"> User </label>
+	    <input type="text" name="name" id="name"/>
+	  </div>
 
-  <p class="email">
-	<input type="text" name="email" id="email"/>
-	<label for="email"> Email (optionl if key was uploaded)  </label>
-  </p>
+	  <p class="email">
+	  <input type="text" name="email" id="email"/>
+	  <label for="email"> Email (optionl if key was uploaded)  </label>
+	  </p>
 
 
-  <p>
-  <select id="repo" name="repo">
-    <option value=""></option>
-  </select>  
-  <label for="repo"> Repository name </label>
-  </p>
+	  <p>
+	  <select id="repo" name="repo">
+	    <option value=""></option>
+	  </select>  
+	  <label for="repo"> Repository name </label>
+	  </p>
 
-  <div class="spacer">&nbsp;</div>
+	  <div class="spacer">&nbsp;</div>
 
-  <p class="submit">
-  <input type="submit" value="Continue &rarr;"/>
-  </p>
+	  <p class="submit">
+	  <input type="submit" value="Continue &rarr;"/>
+	  </p>
 
-</form>      	
+    </fieldset></form>      	
+</div></div>
