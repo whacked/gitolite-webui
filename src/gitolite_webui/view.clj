@@ -3,6 +3,7 @@
      [gitolite-webui.persistency :only [ssh-pending access-pending]]
      [net.cgrand.enlive-html :only [deftemplate defsnippet transform set-attr at attr=]]
      [clojure.template :only [do-template]] 
+     clojure.contrib.logging
      clojure.contrib.strint) 
     (:require 
      (clojure.contrib [error-kit :as kit]) 
@@ -15,6 +16,8 @@
 				  [:body] (en/content body) 
 				  [:title] (en/content title))
 		 forms-layout general-layout admin-layout)
+
+(en/html-resource (str "public/"  "index.html"))
 
 (do-template [name meta] 
 		 (def name (with-meta (en/html-resource (str "public/"  'name ".html")) meta))
@@ -95,5 +98,6 @@
 (defn render [t] 
   (if-not (every? identity ((juxt :title :layout) (meta t)))
 	    (kit/raise *missing-meta* "Missing :layout and :title meta on form")
-	    (->> t ((-> t meta :layout) (-> t meta :title)) (apply str))))
+	    (->>  (en/select t [:body]) first :content
+	    	   ((-> t meta :layout) (-> t meta :title)) (apply str))))
 
