@@ -11,21 +11,20 @@
      [gitolite-webui.gitolite :as git]
      [net.cgrand.enlive-html :as en]))
 
-(do-template [name] 
-		 (deftemplate name (str "public/" 'name ".html") [title body]
-				  [:body] (en/content body) 
+
+(deftemplate general-layout "public/general-layout.html" [title body]
+				  [:div.main] (en/content body) 
 				  [:title] (en/content title))
-		 forms-layout general-layout admin-layout)
 
 (en/html-resource (str "public/"  "index.html"))
 
 (do-template [name meta] 
 		 (def name (with-meta (en/html-resource (str "public/"  'name ".html")) meta))
-		 index {:title "Gitolite webui" :layout general-layout}
-		 upload-form {:title "Upload ssh key" :layout forms-layout}
-		 access-form {:title "Request repository access" :layout forms-layout}
-		 admin-form {:title "Approve requests" :layout admin-layout}
-		 login-form {:title "Login to admin" :layout forms-layout})
+		 index {:title "Gitolite webui" }
+		 upload-form {:title "Upload ssh key" }
+		 access-form {:title "Request repository access" }
+		 admin-form {:title "Approve requests" }
+		 login-form {:title "Login to admin" })
 
 (defn access-form-inc-repos []
   (with-meta (en/transform access-form [:option] 
@@ -79,25 +78,25 @@
 	 (form-success "Key uploaded successfully" 
 			   (list "You can now proceed to requesting access to "
 				   {:tag :a :attrs {:href "/access-form"} :content "repositories."}))
-	 {:title "Upload done" :layout general-layout}))
+	 {:title "Upload done" }))
 
 (def request-submited 
      (with-meta  
 	 (form-success "Access request submited" "An email will be sent to you once its approved.") 
-	 {:title "request submited" :layout general-layout}))
+	 {:title "request submited" }))
 
 (def requests-processed
      (with-meta  
 	 (form-success "Requests processed" "All selected requests were commited and marked as processed.") 
-	 {:title "requests processed" :layout general-layout}))
+	 {:title "requests processed" }))
 
 (kit/deferror *missing-meta*[] [m]
 		  {:msg m
 		  :unhandled (kit/throw-msg RuntimeException)}) 
 
 (defn render [t] 
-  (if-not (every? identity ((juxt :title :layout) (meta t)))
-	    (kit/raise *missing-meta* "Missing :layout and :title meta on form")
+  (if-not (-> t meta :title)
+	    (kit/raise *missing-meta* "Missing :title meta on form")
 	    (->>  (en/select t [:body]) first :content
-	    	   ((-> t meta :layout) (-> t meta :title)) (apply str))))
+	    	    (general-layout (-> t meta :title)) (apply str))))
 
