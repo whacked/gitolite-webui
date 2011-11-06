@@ -1,23 +1,43 @@
-<form  class="form" action="ssh-upload" method="post" accept-charset="utf-8" enctype="multipart/form-data" >
-	    <h1>Ssh public key upload</h1>
-	    <p>Upload you public ssh key</p>
+<div class="row">
+  <div class="span4">
+    <h3>Ssh public key upload</h3>
+    <p>Upload your public (id_rsa.pub) keys into gitolit, this enables you to request access to repositories.</p>
+  </div>
 
-	    <p class="name">
-	      <input type="text" name="name" id="name"/>
-	      <label for="name"> User </label>
-	    </p>
-         
-	    <p class="email">
-	      <input type="text" name="email" id="email"/>
-	      <label for="email"> Email </label>
-	    </p>
+  <div class="span12">
+    <form  class="form" action="ssh-upload" method="post" accept-charset="utf-8" enctype="multipart/form-data" >
+	<fieldset>
+	  <legend>Upload</legend>
 
-	   <div class="fileinputs">
+	  <div class="clearfix" id="name">
+	    <div class='input'>
+		<input type="text" name="name" id="name"/>
+		<span class="help-inline" for="name"> User </span>
+	    </div>	
+	  </div>
+
+	  <div class="clearfix" id="email">
+	    <div class="input">	
+		<input type="text" name="email" id="email"/>
+		<span class="help-inline" for="email">Email</span>
+	    </div>	
+	  </div>
+
+	  <div class="clearfix" id="file">
+	    <div class="input">
     	     <input name="file" type="file" id="file">
-         </div> 
+	    </div>	
+	  </div>
 
-	    <div class="spacer">&nbsp;</div>
-	    <p class="submit">
-             <input type="submit" value="Continue &rarr;"/>
-	    </p>
-</form>      	
+	  <div class="clearfix">
+	    <div class="input">
+		<input type="submit" value="Upload &rarr;"/>
+	    </div>	
+	  </div>
+	</fieldset>
+    </form>      	
+  </div>
+</div>
+
+
+

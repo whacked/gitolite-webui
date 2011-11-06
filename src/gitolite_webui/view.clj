@@ -39,7 +39,7 @@
   (if-let [pair (first errors)]
 	    (with-errors 
 		(at form 
-		    [(keyword (str "input#" (-> pair first name)))] (set-attr :class "error")
+		    [(keyword (str "div#" (-> pair first name)))] (set-attr :class "clearfix error")
 		    [(attr= :for (-> pair first name))] (en/content (-> pair second flatten)))
 		(rest errors)) 
 	    form 
