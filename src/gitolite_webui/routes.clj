@@ -24,7 +24,7 @@
 	     (GET "/upload-form" [] 
 		    (render upload-form))
 
-	     (GET "/access-form" [] (render (access-form-inc-repos))) 
+	     (GET "/access-form" [] (render access-form))
 
 	     (GET "/login-form" [] (render login-form )) 
 
@@ -40,8 +40,7 @@
 					   (render ssh-upload)))))
 
 	     (POST "/access-request" [name email repo :as {params :params}] 
-		     (validate 
-			 (access-form-inc-repos) params valid/access-validate
+		     (validate access-form params valid/access-validate
 			 (fn [] 
 			     (persist/persist-repo-request name repo email) 
 			     (render request-submited))))

@@ -1,7 +1,7 @@
 (ns gitolite-webui.view
     (:use 
      [gitolite-webui.persistency :only [ssh-pending access-pending]]
-     [net.cgrand.enlive-html :only [deftemplate defsnippet transform set-attr at attr=]]
+     [net.cgrand.enlive-html :only [deftemplate defsnippet  defsnippets transform set-attr at attr= snippet]]
      [clojure.template :only [do-template]] 
      clojure.contrib.logging
      clojure.contrib.strint) 
@@ -12,26 +12,23 @@
      [net.cgrand.enlive-html :as en]))
 
 
-(deftemplate general-layout "public/general-layout.html" [title body]
-				  [:div.main] (en/content body) 
+(deftemplate general-layout "public/general-layout.html" [{:keys  [title main]}]
+				  [:div.main] (en/substitute (main)) 
 				  [:title] (en/content title))
 
 (en/html-resource (str "public/"  "index.html"))
 
-(do-template [name meta] 
-		 (def name (with-meta (en/html-resource (str "public/"  'name ".html")) meta))
-		 index {:title "Gitolite webui" }
-		 upload-form {:title "Upload ssh key" }
-		 access-form {:title "Request repository access" }
-		 admin-form {:title "Approve requests" }
-		 login-form {:title "Login to admin" })
+(do-template [name title forms] 
+		 (def name {:main (snippet (str "public/"  'name ".html") [:div.main] []) :title title })
+		 index "Gitolite webui" []
+		 access-form "Request repository access" [[:option (en/clone-for [repo (git/repos)]
+												     (en/do-> 
+													 (en/content repo)
+													 (en/set-attr :value repo)))]]
+		 upload-form "Upload ssh key"  []
+		 admin-form "Approve requests" []
+		 login-form "Login to admin" [])
 
-(defn access-form-inc-repos []
-  (with-meta (en/transform access-form [:option] 
-				   (en/clone-for [repo (git/repos)]
-						     (en/do-> 
-							 (en/content repo)
-							 (en/set-attr :value repo)))) (meta access-form)))
 
 (defn 
   ^{:test (fn [] (with-errors upload-form [[:email ["this is a required field"]]]))} 
@@ -73,6 +70,11 @@
 		[:h1] (en/content title)
 		[:#description] (en/content desc))
 
+(defsnippets "public/index.html" 
+		 [index-mid-up [:div.hero-unit] []]
+		 [index-content [:div.content] []]
+		 )
+
 (def ssh-upload 
      (with-meta 
 	 (form-success "Key uploaded successfully" 
@@ -90,13 +92,10 @@
 	 (form-success "Requests processed" "All selected requests were commited and marked as processed.") 
 	 {:title "requests processed" }))
 
-(kit/deferror *missing-meta*[] [m]
-		  {:msg m
-		  :unhandled (kit/throw-msg RuntimeException)}) 
+(kit/deferror *missing-meta*[] [m] {:msg m :unhandled (kit/throw-msg RuntimeException)}) 
 
 (defn render [t] 
-  (if-not (-> t meta :title)
+  (if-not (t :title)
 	    (kit/raise *missing-meta* "Missing :title meta on form")
-	    (->>  (en/select t [:body]) first :content
-	    	    (general-layout (-> t meta :title)) (apply str))))
+	    (->> t general-layout  (apply str))))
 
