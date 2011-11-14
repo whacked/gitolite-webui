@@ -65,32 +65,23 @@
 						     (en/do-> 
 							 (en/content s)
 							 (en/set-attr :value val)))) (meta admin-form)))
-
-(defsnippet form-success "public/form-success.html" [:#wrapper] [title desc]
-		[:h1] (en/content title)
-		[:#description] (en/content desc))
-
 (defsnippets "public/index.html" 
 		 [index-mid-up [:div.hero-unit] []]
-		 [index-content [:div.content] []]
-		 )
+		 [index-content [:div.content] []])
 
-(def ssh-upload 
-     (with-meta 
-	 (form-success "Key uploaded successfully" 
-			   (list "You can now proceed to requesting access to "
-				   {:tag :a :attrs {:href "/access-form"} :content "repositories."}))
-	 {:title "Upload done" }))
+(do-template [name title desc] 
+	(defsnippet name "public/form-success.html" [:#wrapper] []
+		[:h1] (en/content title)
+		[:#description] (en/content desc))	 
+	      ssh-upload-snip "Key uploaded successfully"  (list "You can now proceed to requesting access to " {:tag :a :attrs {:href "/access-form"} :content "repositories."})
+	      request-submited-snip  "Access request submited" "An email will be sent to you once its approved."
+	      requests-processed-snip  "Requests processed" "All selected requests were commited and marked as processed." )
 
-(def request-submited 
-     (with-meta  
-	 (form-success "Access request submited" "An email will be sent to you once its approved.") 
-	 {:title "request submited" }))
+(def ssh-upload {:title "Upload done" :main ssh-upload-snip})
 
-(def requests-processed
-     (with-meta  
-	 (form-success "Requests processed" "All selected requests were commited and marked as processed.") 
-	 {:title "requests processed" }))
+(def request-submited {:title "request submited" :main request-submited-snip})
+
+(def requests-processed { :title "requests processed"  :main requests-processed-snip})
 
 (kit/deferror *missing-meta*[] [m] {:msg m :unhandled (kit/throw-msg RuntimeException)}) 
 
