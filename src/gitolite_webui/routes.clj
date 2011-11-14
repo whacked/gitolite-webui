@@ -13,9 +13,7 @@
 
 (defn validate [form params validation succ]
   (if-let [errors (validation params)]
-	    (render 
-		(with-meta 
-		  (-> form (with-errors errors) (re-apply-params params)) (meta form))) 
+	    (render (update-in form [:main] #(fn [] ( -> (%) (with-errors errors) (re-apply-params params ))))) 
 	    (succ)))
 
 (defroutes main-routes
