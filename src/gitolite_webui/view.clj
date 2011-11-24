@@ -19,16 +19,19 @@
 (en/html-resource (str "public/"  "index.html"))
 
 (do-template [name title forms] 
-		 (def name {:main (snippet (str "public/"  'name ".html") [:div.main] []) :title title })
-		 index "Gitolite webui" []
+		 (def name {:main (snippet (str "public/"  'name ".html") [:div.main] []) :title title }) index "Gitolite webui" []
 		 access-form "Request repository access" [[:option (en/clone-for [repo (git/repos)]
 												     (en/do-> 
 													 (en/content repo)
 													 (en/set-attr :value repo)))]]
 		 upload-form "Upload ssh key"  []
-		 admin-form "Approve requests" []
 		 login-form "Login to admin" [])
 
+(def access-form {:main (snippet "public/access-form.html" [:div.main] [] 
+				  [:option] (en/clone-for [repo (git/repos)]
+					      (en/do-> 
+					   	  (en/content repo)
+					         (en/set-attr :value repo)))) :title "Request repository access"})
 
 (defn 
   ^{:test (fn [] (with-errors upload-form [[:email ["this is a required field"]]]))} 
@@ -59,12 +62,12 @@
 (defn- requests []
 	 (map #(request-option %) (concat (ssh-pending) (access-pending))))
 
-(defn admin-form-with-data  []
-  (with-meta (en/transform admin-form [:option] 
-				   (en/clone-for [req (requests) :let [[s val] req]]
+(def admin-form {:main (snippet "public/admin-form.html" [:div.main] []
+				 [:option] (en/clone-for [req (requests) :let [[s val] req]]
 						     (en/do-> 
 							 (en/content s)
-							 (en/set-attr :value val)))) (meta admin-form)))
+							 (en/set-attr :value val)))) :title "Approve requests"})
+
 (defsnippets "public/index.html" 
 		 [index-mid-up [:div.hero-unit] []]
 		 [index-content [:div.content] []])
