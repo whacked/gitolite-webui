@@ -1,19 +1,27 @@
-<form  class="form" action="login" method="post" accept-charset="utf-8">
-	    <h1>Admin Login</h1>
-	    <p>Login to manage requests</p>
+<div class="main"><div class="row">
+    <form  class="form" action="login" method="post" accept-charset="utf-8">
+	<h1>Admin Login</h1>
+	<p>Login to manage requests</p>
 
-	    <p class="user">
-	      <input type="text" name="user" id="user"/>
-	      <label for="user"> User </label>
-	    </p>
-         
-	    <p class="password">
-	      <input type="text" name="pass" id="pass"/>
-	      <label for="pass"> Password </label>
-	    </p>
+	<div class="clearfix" id="user"> 
+	  <div class="input">
+	    <input type="text" name="user" id="user"/>
+	    <span class="help-inline" for="user"> User </span>
+	  </div>
+	</div>
 
-	    <div class="spacer">&nbsp;</div>
-	    <p class="submit">
-             <input type="submit" value="Continue &rarr;"/>
-	    </p>
-</form>      	
+	<div class="clearfix" id="pass"> 
+	  <div class="input"> 
+	    <input type="text" name="pass" id="pass"/>
+	    <span class="help-inline" for="pass"> Password </span>
+	  </div> 
+	</div>
+
+
+	<div class="clearfix">
+	  <div class="input">
+	    <input type="submit" value="Continue &rarr;"/>
+	  </div>
+	</div>
+    </form>
+</div></div>
