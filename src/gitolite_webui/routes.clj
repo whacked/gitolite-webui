@@ -28,7 +28,7 @@
 
 	     (GET "/admin-requests" {session :session}
 		    (if (session :user) 
-			(render (admin-form-with-data))
+			(render admin-form)
 			(res/redirect "/login-form"))) 
 
 	     (mp/wrap-multipart-params 
