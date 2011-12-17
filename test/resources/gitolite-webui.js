@@ -8,4 +8,9 @@
      "port":587,
      "ssl":true
    }
+  "db": {
+     "user":"user",
+     "password":"pass",
+     "subname":"demo"
+   }
 }
