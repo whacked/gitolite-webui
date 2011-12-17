@@ -11,3 +11,4 @@ pom.xml
 gitolite-db
 playground
 gitolite.log
+demo.*.db
