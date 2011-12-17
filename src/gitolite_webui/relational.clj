@@ -11,6 +11,11 @@
 
 (defdb gitolite-db h2-connection)
 
+(defentity contact
+  (pk :name)
+  (table :contact) 
+  (entity-fields :name :email))
+
 (defentity key-request
   (pk :id)
   (table :key_req) 
@@ -23,11 +28,13 @@
 
 (defn create-schema []
   (with-connection h2-connection
-    (create-table :acc_req [:id "identity"] [:name "varchar(120)"] [:repo "varchar(120)"])
-    (create-table :key_req [:id "identity"] [:name "varchar(120)"] [:ssh_key "varchar"])))
+    (create-table :contact [:name "varchar"] [:email "varchar"])
+    (create-table :acc_req [:id "identity"] [:name "varchar"] [:repo "varchar"])
+    (create-table :key_req [:id "identity"] [:name "varchar"] [:ssh_key "varchar"])))
 
 (defn drop-schema []
   (with-connection h2-connection
     (drop-table :acc_req)
+    (drop-table :contact)
     (drop-table :key_req)))
 

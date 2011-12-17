@@ -16,3 +16,7 @@
    (let [ssh-key (slurp "test/resources/id_rsa.pub")]
     (insert key-request (values {:NAME "blue boy" :SSH_KEY ssh-key})) 
     (is (= (select key-request) [{:ID 1 :NAME "blue boy" :SSH_KEY ssh-key}]))))
+
+(deftest contact-sanity
+    (insert contact (values {:NAME "blue boy" :EMAIL "bla@bla.com"})) 
+    (is (= (select contact) [{:NAME "blue boy" :EMAIL "bla@bla.com"}])))
