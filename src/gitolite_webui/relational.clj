@@ -14,19 +14,17 @@
 (defentity key-request
   (pk :id)
   (table :key_req) 
-  (entity-fields :name :ssh_key)
-  )
+  (entity-fields :name :ssh_key))
 
 (defentity acc-request
   (pk :id)
   (table :acc_req) 
-  (entity-fields :name :repo)
-  )
+  (entity-fields :name :repo))
 
 (defn create-schema []
   (with-connection h2-connection
     (create-table :acc_req [:id "identity"] [:name "varchar(120)"] [:repo "varchar(120)"])
-    (create-table :key_req [:id "identity"] [:name "varchar(120)"] [:last "varchar(120)"]))) 
+    (create-table :key_req [:id "identity"] [:name "varchar(120)"] [:ssh_key "varchar"])))
 
 (defn drop-schema []
   (with-connection h2-connection
