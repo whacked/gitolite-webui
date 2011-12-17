@@ -10,4 +10,9 @@
      "protocol" :"smtp",
      "ssl":true
    }
+  "db": {
+     "user":"user",
+     "password":"pass",
+     "subname":"demo"
+   }
 }
