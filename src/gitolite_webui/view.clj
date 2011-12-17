@@ -1,5 +1,6 @@
 (ns gitolite-webui.view
     (:use 
+     [clojure.string :only [capitalize]]
      [gitolite-webui.persistency :only [ssh-pending access-pending]]
      [net.cgrand.enlive-html :only [deftemplate defsnippet  defsnippets transform set-attr at attr= snippet]]
      [clojure.template :only [do-template]] 
