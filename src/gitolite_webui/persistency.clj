@@ -98,8 +98,11 @@
     (insert repo-request {:name name :repo repo })
     (add-request contact {:name name :email email })))
 
+(defn- key-to-entity [type-key]
+  (->> type-key name symbol (ns-resolve 'gitolite-webui.persistency) deref))
+
 (defn clear-request [req]
-  (let [entity (->> (type req) name symbol (ns-resolve 'gitolite-webui.persistency) deref)]
+  (let [entity (key-to-entity (type req))]
     (delete entity (where req))))
 
 
