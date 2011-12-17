@@ -8,19 +8,19 @@
 
 (use-fixtures :each schema-setup)
 
-(defn assert-type-and-value [rows value rtype]
-    (is (= rows [value]))
+(defn assert-row-and-type [rows row rtype]
+    (is (= rows [row]))
     (is (= (-> rows first type) rtype)))
 
 (deftest acc-request-sanity
    (insert acc-request (values {:NAME "blue boy" :REPO "repo name"}))
-   (assert-type-and-value 
+   (assert-row-and-type
       (select acc-request) {:ID 1 :NAME "blue boy" :REPO "repo name"} :repo-request))
 
 (deftest key-store-sanity
    (let [ssh-key (slurp "test/resources/id_rsa.pub")]
      (insert key-request (values {:NAME "blue boy" :SSH_KEY ssh-key})) 
-     (assert-type-and-value 
+     (assert-row-and-type
        (select key-request) {:ID 1 :NAME "blue boy" :SSH_KEY ssh-key} :key-request)))
 
 (deftest contact-sanity
