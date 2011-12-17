@@ -19,12 +19,15 @@
 (defentity key-request
   (pk :id)
   (table :key_req) 
-  (entity-fields :name :ssh_key))
+  (entity-fields :name :ssh_key)
+  (transform #(with-meta % {:type :key-request})))
+
 
 (defentity acc-request
   (pk :id)
   (table :acc_req) 
-  (entity-fields :name :repo))
+  (entity-fields :name :repo)
+  (transform #(with-meta % {:type :repo-request})))
 
 (defn create-schema []
   (with-connection h2-connection
