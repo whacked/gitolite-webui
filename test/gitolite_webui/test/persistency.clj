@@ -10,6 +10,7 @@
    (drop-schema))
 
 (use-fixtures :each schema-setup)
+(use-fixtures :once initialize-db)
 
 (defn assert-row-and-type [rows row rtype]
     (is (= rows [row]))
@@ -43,16 +44,3 @@
   (persist-repo-request "ronen" "play-0" nil)
   (persist-repo-request "ronen" "play-1" "bla@bla.com")
   (is (= (access-pending) [{:name "ronen" :repo "play-0" } {:name "ronen" :repo "play-1" } ])))
-
-
-
-#_(deftest diff-watcher-test
-  (let [result (atom nil)]
-    (letfn [(action [a] (reset! result a)) (enrich [a] (assoc a :email "bla"))]
-	(p/diff-watcher action enrich nil {} nil {:repo-request {:data #{{:name "ronen"}}}}) 
-      (is (= @result nil))
-      (p/diff-watcher action enrich nil {} {:repo-request {:data #{{:name "ronen"}}}} {:repo-request {:data #{}}}) 
-	(is (= @result '({:name "ronen" :email "bla"}))))))
-
-
-

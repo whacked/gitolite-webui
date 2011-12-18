@@ -15,7 +15,7 @@
 
 (defn -main []
    (conf/prod) 
-   (persist/initialize "gitolite-db")
+   (persist/initialize-db)
    (def server (jet/run-jetty #'app  {:port 8081 :join? false})))
 
 (defn stop [] (. server stop))

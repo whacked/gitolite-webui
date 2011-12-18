@@ -1,7 +1,4 @@
 (ns gitolite-webui.persistency
-    (:require 
-     [clojure.contrib.datalog.database :as dblog]
-     [gitolite-webui.db :as db])
     (:use 
      [clojure.string :only (lower-case)]
      [gitolite-webui.notification :only (email-approved)]
@@ -18,9 +15,9 @@
    {:pre [(@config :db)] :post [(not-any? nil? (map #(get-in @config [:db %]) [:user :password :subname] ))]}
    (merge (@config :db) {:classname "org.h2.Driver" :subprotocol "h2:file" }))
 
-(def h2-connection (connection-settings))
-
-(defdb gitolite-db h2-connection)
+(defn initialize-db []
+  (def h2-connection (connection-settings))
+  (defdb gitolite-db h2-connection))
 
 (defn- ^{:test (fn [] (= (lowercase-keys {:BLA 1}) {:bla 1}))}
   lowercase-keys [upper-keys-map] 
@@ -75,9 +72,7 @@
       (action (map enrich approved)))))
 
 
-(defn initialize [db-file]
-  "Initializes persistency"
-  ) 
+ 
 
 (defn ssh-pending [] (select key-request))
 
