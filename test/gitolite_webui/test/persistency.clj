@@ -39,18 +39,12 @@
    (clear-request typed-req))
    (is (= (ssh-pending) '())))
 
-#_(against-background [(before :facts) 
-			   (around :facts )]
-    (fact  => (just ))
-    (fact 
-    	    (p/ssh-pending) => (just '()))) 
+(deftest multipe-repo-requests-for-user
+  (persist-repo-request "ronen" "play-0" nil)
+  (persist-repo-request "ronen" "play-1" "bla@bla.com")
+  (is (= (access-pending) [{:name "ronen" :repo "play-0" } {:name "ronen" :repo "play-1" } ])))
 
-#_(fact (p/access-pending) => (just (list {:name "ronen" :repo "play-1" }))
-	(against-background 
-	  (before :checks 
-	    (do 
-            (p/persist-repo-request "ronen" "play-0" nil)
-	  	(p/persist-repo-request "ronen" "play-1" "bla@bla.com")))))
+
 
 #_(deftest diff-watcher-test
   (let [result (atom nil)]
