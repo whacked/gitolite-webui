@@ -19,6 +19,12 @@
   (def h2-connection (connection-settings))
   (defdb gitolite-db h2-connection))
 
+(defn- existing-tables [db]
+  (with-connection h2-connection
+    (into #{}
+      (map #(-> % :table_name lower-case keyword)
+        (resultset-seq (-> (connection) (.getMetaData) (.getTables nil nil "%" nil)))))))
+
 (defn- ^{:test (fn [] (= (lowercase-keys {:BLA 1}) {:bla 1}))}
   lowercase-keys [upper-keys-map] 
    (reduce (fn [m [k v]] (assoc m (-> k name lower-case keyword) v)) {} upper-keys-map))
@@ -70,9 +76,6 @@
   (let [[old-req new-req] (map #((juxt (comp :data :repo-request) (comp :data :key-request)) %) [old-db new-db])]
     (doseq [[o n] (map list old-req new-req) :let [approved (difference o n)] :when (not-empty approved)] 
       (action (map enrich approved)))))
-
-
- 
 
 (defn ssh-pending [] (select key-request))
 
