@@ -1,6 +1,6 @@
 (ns gitolite-webui.persistency
     (:use 
-     [clojure.string :only (lower-case)]
+     [clojure.string :only (lower-case replace)]
      [gitolite-webui.notification :only (email-approved)]
       gitolite-webui.debug
      [clojure.contrib.io :only (file)]
@@ -31,36 +31,38 @@
 
 (defn- apply-type [result type] (with-meta result {:type type}))
 
-(defentity contact
-  (pk :name)
-  (table :contact) 
-  (entity-fields :name :email)
-  (transform lowercase-keys))
+(def entities
+  (letfn [(lower-with-type [type val] (-> val lowercase-keys (apply-type type)))]
+    {:contact {:key :name :fields [:name :email] :t-fn lowercase-keys}
+     :key-request {:key :name :fields [:name :key] :t-fn (partial lower-with-type :key-request)}
+     :repo-request {:key [:name :repo] :fields [:name :repo] :t-fn (partial lower-with-type :repo-request)}}))
 
-(defentity key-request
-  (pk :name)
-  (table :key_req) 
-  (entity-fields :name :key)
-  (transform #(-> % lowercase-keys (apply-type :key-request))))
+(doseq [[entity-key {:keys [key fields t-fn]}] entities :let [entity-name (name entity-key) table-key (-> entity-name str (replace #"\-" "_") keyword)]] 
+  (intern 'gitolite-webui.persistency (symbol entity-name) ; dynamic defentity
+    (-> 
+      (create-entity entity-name) 
+      (pk key) 
+      (table table-key) 
+      (entity-fields fields) 
+      (transform t-fn))))
 
-(defentity repo-request
-  (pk [:name :repo])
-  (table :acc_req) 
-  (entity-fields :name :repo)
-  (transform #(-> % lowercase-keys (apply-type :repo-request))))
+(defn schema-statement [statment name fields]
+  (concat (list statment name) fields))
 
-(defn create-schema []
-  (with-connection h2-connection
-    (create-table :contact [:name "varchar"] [:email "varchar"])
-    (create-table :acc_req ["PRIMARY KEY" "(name, repo)"] [:name "varchar"] [:repo "varchar"] )
-    (create-table :key_req [:name "varchar"] [:key "varchar"])))
+(defmacro create-and-drop [connection tables]
+  `(do  
+    (defn create-schema []
+     (with-connection ~connection
+     ~@(for [[name fields] tables] (schema-statement 'create-table name fields) ))) 
+    (defn drop-schema []
+     (with-connection ~connection
+     ~@(for [[name & fields] tables] (schema-statement 'drop-table name '()))))))
 
-(defn drop-schema []
-  (with-connection h2-connection
-    (drop-table :acc_req)
-    (drop-table :contact)
-    (drop-table :key_req)))
- 
+(create-and-drop h2-connection
+    {:contact [[:name "varchar"] [:email "varchar"]] 
+     :repo_request [["PRIMARY KEY" "(name, repo)"] [:name "varchar"] [:repo "varchar"]] 
+     :key_request [[:name "varchar"] [:key "varchar"]]}) 
+
 (defn connection-settings [] 
    {:pre  [(@config :db)] :post [(not-any? nil? (map #(get-in @config [:db %]) [:user :password :subname] ))]}
    (merge (@config :db) {:classname "org.h2.Driver" :subprotocol "h2:file" }))

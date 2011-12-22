@@ -10,7 +10,7 @@
    (drop-schema))
 
 (use-fixtures :each schema-setup)
-(use-fixtures :once initialize-db)
+(initialize-db)
 
 (defn assert-row-and-type [rows row rtype]
     (is (= rows [row]))
