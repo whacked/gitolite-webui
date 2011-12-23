@@ -4,10 +4,7 @@
           clojure.test midje.sweet 
           clojure.contrib.trace))
 
-(defn schema-setup [f]
-   (create-schema)
-   (f) 
-   (drop-schema))
+(defn schema-setup [f] (reset-schema) (f))
 
 (use-fixtures :each schema-setup)
 (initialize-db)

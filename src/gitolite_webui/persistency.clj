@@ -1,8 +1,7 @@
 (ns gitolite-webui.persistency
     (:use 
-     [clojure.string :only (lower-case replace)]
      [gitolite-webui.notification :only (email-approved)]
-      gitolite-webui.debug
+      gitolite-webui.debug gitolite-webui.schema
      [clojure.contrib.io :only (file)]
      [clojure.contrib.datalog.rules :only (<- ?- rules-set)]
      [clojure.contrib.def :only (defonce-)]
@@ -11,61 +10,13 @@
       clojure.contrib.sql
       gitolite-webui.config))
 
-(defn connection-settings [] 
-   {:pre [(@config :db)] :post [(not-any? nil? (map #(get-in @config [:db %]) [:user :password :subname] ))]}
-   (merge (@config :db) {:classname "org.h2.Driver" :subprotocol "h2:file" }))
 
-(defn initialize-db []
-  (def h2-connection (connection-settings))
-  (defdb gitolite-db h2-connection))
 
-(defn- existing-tables [db]
-  (with-connection h2-connection
-    (into #{}
-      (map #(-> % :table_name lower-case keyword)
-        (resultset-seq (-> (connection) (.getMetaData) (.getTables nil nil "%" nil)))))))
+(defn initialize-db [] (defdb gitolite-db (connection-settings)))
 
-(defn- ^{:test (fn [] (= (lowercase-keys {:BLA 1}) {:bla 1}))}
-  lowercase-keys [upper-keys-map] 
-   (reduce (fn [m [k v]] (assoc m (-> k name lower-case keyword) v)) {} upper-keys-map))
-
-(defn- apply-type [result type] (with-meta result {:type type}))
-
-(def entities
-  (letfn [(lower-with-type [type val] (-> val lowercase-keys (apply-type type)))]
-    {:contact {:key :name :fields [:name :email] :t-fn lowercase-keys}
-     :key-request {:key :name :fields [:name :key] :t-fn (partial lower-with-type :key-request)}
-     :repo-request {:key [:name :repo] :fields [:name :repo] :t-fn (partial lower-with-type :repo-request)}}))
-
-(doseq [[entity-key {:keys [key fields t-fn]}] entities :let [entity-name (name entity-key) table-key (-> entity-name str (replace #"\-" "_") keyword)]] 
-  (intern 'gitolite-webui.persistency (symbol entity-name) ; dynamic defentity
-    (-> 
-      (create-entity entity-name) 
-      (pk key) 
-      (table table-key) 
-      (entity-fields fields) 
-      (transform t-fn))))
-
-(defn schema-statement [statment name fields]
-  (concat (list statment name) fields))
-
-(defmacro create-and-drop [connection tables]
-  `(do  
-    (defn create-schema []
-     (with-connection ~connection
-     ~@(for [[name fields] tables] (schema-statement 'create-table name fields) ))) 
-    (defn drop-schema []
-     (with-connection ~connection
-     ~@(for [[name & fields] tables] (schema-statement 'drop-table name '()))))))
-
-(create-and-drop h2-connection
-    {:contact [[:name "varchar"] [:email "varchar"]] 
-     :repo_request [["PRIMARY KEY" "(name, repo)"] [:name "varchar"] [:repo "varchar"]] 
-     :key_request [[:name "varchar"] [:key "varchar"]]}) 
-
-(defn connection-settings [] 
-   {:pre  [(@config :db)] :post [(not-any? nil? (map #(get-in @config [:db %]) [:user :password :subname] ))]}
-   (merge (@config :db) {:classname "org.h2.Driver" :subprotocol "h2:file" }))
+(defn reset-schema [] 
+  (drop-schema) 
+  (create-schema))
 
 (defn user-email [req]
   (select contact (where {:name (req :name)})))

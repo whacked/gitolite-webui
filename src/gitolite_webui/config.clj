@@ -14,3 +14,8 @@
 
 (defn admins [user] 
   (get-in @config [:admins (keyword user)]))
+
+(defn connection-settings [] 
+   {:pre [(@config :db)] :post [(not-any? nil? (map #(get-in @config [:db %]) [:user :password :subname] ))]}
+   (merge (@config :db) {:classname "org.h2.Driver" :subprotocol "h2:file" }))
+
