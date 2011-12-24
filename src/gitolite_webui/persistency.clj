@@ -53,6 +53,6 @@
 
 (defn clear-request [req]
   (let [entity (key-to-entity (type req)) ]
-    (delete entity (where req))))
+    (delete entity (where (dissoc req :req-type)))))
 
 
