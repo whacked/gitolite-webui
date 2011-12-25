@@ -1,5 +1,6 @@
 (ns gitolite-webui.schema
    (:use korma.db korma.core clojure.contrib.sql 
+    clojure.contrib.logging
     [clojure.string :only (lower-case replace)]
     [gitolite-webui.config :only (connection-settings)]))
 
@@ -40,7 +41,10 @@
 
 (defn- schema-statement 
   ([statment name] (schema-statement statment name '()))
-  ([statment name fields] `(~statment ~name ~@fields)))
+  ([statment name fields] 
+   `(do 
+     (trace (str ~statment " " ~name " " ~@fields))
+     (~statment ~name ~@fields))))
 
 (defmacro create-and-drop [tables-map]
   `(do  
