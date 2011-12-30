@@ -2,11 +2,11 @@
   "gitolite-home":"test/resources/",
   "admins":{"admin":"changeme"}
   "email":{
-     "from":"admin@gmail.com",
-     "user":"user@gmail.com",
-     "pass":"",
+     "from":"admin",
+     "user":"user",
+     "pass":"pass",
      "host" :"smtp.gmail.com",
-     "port":465,
+     "port":587,
      "protocol" :"smtp",
      "ssl":true
    }
