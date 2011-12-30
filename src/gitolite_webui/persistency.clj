@@ -1,11 +1,12 @@
 (ns gitolite-webui.persistency
     (:use 
-     [gitolite-webui.notification :only (email-approved)]
+     [gitolite-webui.notification :only (email-request)]
       gitolite-webui.debug gitolite-webui.schema
      [clojure.contrib.io :only (file)]
      [clojure.contrib.datalog.rules :only (<- ?- rules-set)]
      [clojure.contrib.def :only (defonce-)]
      [clojure.set :only (difference)] 
+      clojure.contrib.logging
       korma.db korma.core 
       clojure.contrib.sql
       gitolite-webui.config))
@@ -17,18 +18,6 @@
 (defn reset-schema [] 
   (drop-schema) 
   (create-schema))
-
-(defn user-email [req]
-  (select contact (where {:name (req :name)})))
-
-(defn- add-email [req] 
-       (assoc req :email (user-email req)))
-
-#_(defn diff-watcher [action enrich ref key old-db new-db]
-  "Apply action on enriched approved requests (difference found between old and new)."
-  (let [[old-req new-req] (map #((juxt (comp :data :repo-request) (comp :data :key-request)) %) [old-db new-db])]
-    (doseq [[o n] (map list old-req new-req) :let [approved (difference o n)] :when (not-empty approved)] 
-      (action (map enrich approved)))))
 
 (defn ssh-pending [] (select key-request))
 
@@ -51,8 +40,15 @@
 (defn- key-to-entity [type-key]
   (->> type-key name symbol (ns-resolve 'gitolite-webui.persistency) deref))
 
+(defn user-email [req]
+  (-> (select contact (where {:name (req :name)})) first :email))
+
+(defn- add-email [req] 
+       (assoc req :email (user-email req)))
+ 
 (defn clear-request [req]
   (let [entity (key-to-entity (type req)) ]
-    (delete entity (where (dissoc req :req-type)))))
+    (delete entity (where (dissoc req :req-type)))
+    (future (email-request (add-email req)))))
 
 

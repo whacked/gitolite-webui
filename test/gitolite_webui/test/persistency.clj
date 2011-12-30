@@ -43,5 +43,5 @@
   (is (= (access-pending) [{:name "ronen" :repo "play-0" } {:name "ronen" :repo "play-1" } ])))
 
 (deftest clear-requests
-  (persist-repo-request "ronen" "play-0" nil)      
+  (persist-repo-request "ronen" "play-0" "bla@bla.com")      
   (clear-request (with-meta {:name "ronen" :repo "play-0" :req-type :repo-request} {:type :repo-request})))

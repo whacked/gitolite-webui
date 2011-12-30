@@ -1,10 +1,13 @@
 (ns gitolite-webui.test.notification
     (:use 
-       clojure.test midje.sweet 
+       clojure.test 
+       gitolite-webui.config
        gitolite-webui.notification 
      ))
 
-(fact 
-  (notify-user-constrained "bla@bla" "subjet" "body" {:email {:user nil :pass "xyz" :host "" :port 5 :ssl false}}) => (throws java.lang.AssertionError)
-  (notify-user-constrained nil "subjet" "body" {:email {:user "bla" :pass "xyz" :host "google" :port 5 :ssl false}}) => (throws java.lang.AssertionError)
+(deftest notify-user-assertion
+  (swap! config assoc-in [:email :user] nil)
+  (is (thrown? java.lang.AssertionError (notify-user "bla@bla" "subjet" "body"))) 
+  (swap! config assoc-in [:email :user] "bla")
+  (is (thrown? java.lang.AssertionError (notify-user nil "subjet" "body"))) 
   )

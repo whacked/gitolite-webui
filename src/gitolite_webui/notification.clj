@@ -1,6 +1,5 @@
 (ns gitolite-webui.notification
     (:use 
-      gitolite-webui.trammel-checks
       gitolite-webui.config
       clojure.contrib.strint
       clojure.contrib.logging
@@ -8,9 +7,18 @@
     (:import 
      (org.apache.commons.mail SimpleEmail DefaultAuthenticator EmailException)))
 
+(defmacro non-nil-params [fn]
+  "Checks that all input parameters to fn are not nil"
+  `(every? (comp not nil?) ~(first (:arglists (meta (resolve fn))))))
 
-(defn notify-user 
-  ([to subject body] 
+(defmacro keys-not-empty [map & keys]
+  "Checks that all given keys are not empty in map" 
+  `(every? (comp not empty?) ((juxt ~@keys) ~map))
+  )
+
+
+(defn notify-user [to subject body] 
+       {:pre [(non-nil-params notify-user) (keys-not-empty (:email @config) :host :from :user :pass)]}
 	 (let [{:keys [from user pass host port ssl]} (:email @config)]
 	   (try
 	     (do (doto (SimpleEmail.)
@@ -26,24 +34,13 @@
 		 (info (<< "Email send to ~{to}")))
 	     (catch EmailException e (error (str e to))) 
 	     ) 
-	   )))
+	   ))
 
-(def notify-user-contract 
-     (contract notify-user-constraints 
-		   "Defines constraints for notify-user"
-		   [to subject body config] 
-		   [(non-nil-params notify-user) 
-		    (keys-not-empty (:email config) :host :from)
-		    ]))
-
-(def notify-user-constrained (with-constraints notify-user notify-user-contract))
-
-(defmulti email-request keys)
-(defmethod email-request '(:email :name :repo) [{:keys [email] :as req} ]
- (notify-user-constrained email "Your repository access request has been approved" (<< "Verify that you can access it by cloning ~(:repo req) repository.")) 
-  )
-(defmethod email-request '(:email :name :key) [{:keys [email] :as req} ]
-   (notify-user-constrained email "Your key request in gitolite was approved" (<< "Please verify that your public key matches ~(:key req)"))
+(defn email-request [{:keys [email] :as req} ]
+  (condp = (type req) 
+   :repo-request (notify-user email "Your repository access request has been approved" (<< "Verify that you can access it by cloning ~(:repo req) repository.")) 
+   :key-request (notify-user email "Your key request in gitolite was approved" (<< "Please verify that your public key matches ~(:key req)"))
+    )
   )
 
 (defn email-approved [approved]
