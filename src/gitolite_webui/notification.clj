@@ -9,8 +9,9 @@
      (org.apache.commons.mail SimpleEmail DefaultAuthenticator EmailException)))
 
 
-(defn- notify-user [to subject body config]
-	 (let [{:keys [from user pass host port ssl]} (:email config)]
+(defn notify-user 
+  ([to subject body] 
+	 (let [{:keys [from user pass host port ssl]} (:email @config)]
 	   (try
 	     (do (doto (SimpleEmail.)
 			    (.setHostName host) 
@@ -25,7 +26,7 @@
 		 (info (<< "Email send to ~{to}")))
 	     (catch EmailException e (error (str e to))) 
 	     ) 
-	   ))
+	   )))
 
 (def notify-user-contract 
      (contract notify-user-constraints 
@@ -39,17 +40,14 @@
 
 (defmulti email-request keys)
 (defmethod email-request '(:email :name :repo) [{:keys [email] :as req} ]
- (notify-user-constrained email "Your repository access request has been approved" (<< "Verify that you can access it by cloning ~(:repo req) repository.") @config) 
+ (notify-user-constrained email "Your repository access request has been approved" (<< "Verify that you can access it by cloning ~(:repo req) repository.")) 
   )
 (defmethod email-request '(:email :name :key) [{:keys [email] :as req} ]
-   (notify-user-constrained email "Your key request in gitolite was approved" (<< "Please verify that your public key matches ~(:key req)") @config)
+   (notify-user-constrained email "Your key request in gitolite was approved" (<< "Please verify that your public key matches ~(:key req)"))
   )
-
-
 
 (defn email-approved [approved]
   (doall (map deref (for [req approved] (future (email-request req))))))
-
 
 
 

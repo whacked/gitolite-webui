@@ -15,7 +15,7 @@
                  [log4j "1.2.16"] 
                  [korma "0.2.1"]
                  [com.h2database/h2 "1.3.161"]
-                 ]
+                 [org.clojure/tools.cli "0.2.1"]]
 
      :main gitolite-webui.core
      :dev-dependencies [[lein-ring "0.4.5"][lein-midje "1.0.7"] [fs "0.8.1"]]
