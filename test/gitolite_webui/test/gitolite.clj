@@ -8,14 +8,15 @@
     [gitolite-webui.gitolite :only (git)]
     ))
 
-(def repo-home (@config :gitolite-home file))
+(defn repo-home [] (-> @config :gitolite-home file))
 
 (defn set-repo[]
-  (fs/copy-tree (file "test/resources/") repo-home)
+  (dev)
+  (fs/copy-tree (file "test/resources/") (repo-home))
   (git :init))
 
 (defn cleanup [] 
-   (fs/deltree repo-home))
+   (fs/deltree (repo-home)))
 
 (fact (g/repo-name "repo   play-0") => (just "play-0"))
 
@@ -48,7 +49,7 @@
    	   (against-background 
    	       (before :checks 
    	   	    (do 
-   	   		(fs/touch (str repo-home "bla"))
-   	   		(git :add [(str repo-home "bla")]) 
+   	   		(fs/touch (str (repo-home) "/bla"))
+   	   		(git :add [(str (repo-home) "/bla")]) 
    	   		(git :commit  ["-m" "lets play"])))))
    )

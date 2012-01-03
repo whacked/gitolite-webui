@@ -10,10 +10,9 @@
 (defn read-config [env] 
     (json/read-json (slurp (file (resolution env) "gitolite-webui.js"))))
 
-(defonce config 
-    (if (.exists (File. (resolution :dev))) 
-      (atom (read-config :dev))))
+(defonce config (atom nil))
 
+(defn dev [] (swap! config (fn [_] (read-config :dev))))
 (defn prod [] (swap! config (fn [_] (read-config :prod))))
 
 (defn admins [user] 

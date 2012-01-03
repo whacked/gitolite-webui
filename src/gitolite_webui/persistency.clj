@@ -13,7 +13,10 @@
 
 
 
-(defn initialize-db [] (defdb gitolite-db (connection-settings)))
+(defn initialize-db [] 
+  (defdb gitolite-db (connection-settings))
+  ;Create schema will create a table only if it does not exist alreay
+  (create-schema))
 
 (defn reset-schema [] 
   (drop-schema) 
