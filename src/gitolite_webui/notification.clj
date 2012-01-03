@@ -21,7 +21,8 @@
        {:pre [(non-nil-params notify-user) (keys-not-empty (:email @config) :host :from :user :pass)]}
 	 (let [{:keys [from user pass host port ssl]} (:email @config)]
 	   (try
-	     (do (doto (SimpleEmail.)
+	     (do
+	       (doto (SimpleEmail.)
 			    (.setHostName host) 
 			    (.setSmtpPort port)
 			    (.setAuthenticator (DefaultAuthenticator. user  pass))
@@ -32,7 +33,7 @@
 			    (.addTo to)
 			    (.send)) 
 		 (info (<< "Email send to ~{to}")))
-	     (catch EmailException e (error (str e to))) 
+	     (catch EmailException e (error (str e " while send email to " to))) 
 	     ) 
 	   ))
 
