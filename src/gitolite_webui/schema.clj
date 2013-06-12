@@ -1,6 +1,6 @@
 (ns gitolite-webui.schema
    (:use korma.db korma.core
-      [clojure.java.jdbc :only (with-connection)]
+      [clojure.java.jdbc :only (with-connection connection create-table drop-table)]
     clojure.tools.logging
     [gitolite-webui.config :only (connection-settings)]))
 
