@@ -1,14 +1,13 @@
 (ns gitolite-webui.gitolite
     (:use
      [gitolite-webui.util :only (file)]
-     [clojure.contrib.string :only [split-lines split as-str blank?]]
-     [clojure.contrib.macros :only [letfn- ]]
      [clojure.string :only (replace-first)]
      [clojure.core :only [re-find]]
      [clojure.java.shell :only [sh]]
      clojure.core.strint
      clojure.tools.logging
-     gitolite-webui.config 
+     gitolite-webui.config
+     gitolite-webui.util
      ))
 
 (defn git 
@@ -38,7 +37,7 @@
 		   (->> (slurp-conf) split-lines (remove #(.startsWith % "#")) (partition-by blank?))))
 
 (defn permissions [lines]
-  (let [pair (fn [line] (->> line (split #"\=") (map #(.trim %)) reverse (into [])))] 
+  (let [pair (fn [line] (->> line (.split line #"\=") (map #(.trim %)) reverse (into [])))] 
     (into {} (reduce (fn [m line] (conj m (pair line))) [] lines))))
 
 (defn parse-conf []
