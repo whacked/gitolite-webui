@@ -7,7 +7,6 @@
      [clojure.set :only (difference)] 
       clojure.tools.logging
       korma.db korma.core 
-      clojure.contrib.sql
       gitolite-webui.config))
 
 

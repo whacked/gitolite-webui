@@ -1,14 +1,14 @@
 (ns gitolite-webui.schema
-   (:use korma.db korma.core clojure.contrib.sql 
+   (:use korma.db korma.core
+      [clojure.java.jdbc :only (with-connection)]
     clojure.tools.logging
-    [clojure.string :only (lower-case replace)]
     [gitolite-webui.config :only (connection-settings)]))
 
 (defn- apply-type [result type] (with-meta result {:type type}))
 
 (defn- ^{:test (fn [] (= (lowercase-keys {:BLA 1}) {:bla 1}))}
   lowercase-keys [upper-keys-map] 
-   (reduce (fn [m [k v]] (assoc m (-> k name lower-case keyword) v)) {} upper-keys-map))
+   (reduce (fn [m [k v]] (assoc m (-> k name clojure.string/lower-case keyword) v)) {} upper-keys-map))
 
 (def transforms
   (letfn [(lower-with-type [type val] (-> val lowercase-keys (apply-type type)))]
@@ -21,7 +21,7 @@
                :repo-request {:key [:name :repo] :fields [:name :repo]}})
 
 (doseq [[entity-key {:keys [key fields]}] entities 
-  :let [entity-name (name entity-key) table-key (-> entity-name str (replace #"\-" "_") keyword)]] 
+  :let [entity-name (name entity-key) table-key (-> entity-name str (clojure.string/replace #"\-" "_") keyword)]] 
   (intern 'gitolite-webui.persistency (symbol entity-name) ; dynamic defentity
     (-> 
       (create-entity entity-name) 
@@ -33,7 +33,7 @@
 (defn- existing-tables []
   (with-connection (connection-settings)
     (into #{}
-      (map #(-> % :table_name lower-case keyword)
+      (map #(-> % :table_name clojure.string/lower-case keyword)
         (resultset-seq (-> (connection) (.getMetaData) (.getTables nil nil "%" nil)))))))
 
 (defn- act-on-table [condition name todo]

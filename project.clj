@@ -5,6 +5,7 @@
                  [org.clojure/data.json "0.2.2"]
                  [org.clojure/core.incubator "0.1.2"]
                  [org.clojure/tools.logging "0.2.6"]
+                 [org.clojure/java.jdbc "0.3.0-alpha4"]
                  [ring/ring-devel "1.2.0-beta1"]
                  [ring/ring-jetty-adapter "1.1.8"]
                  [compojure "1.1.5"]
