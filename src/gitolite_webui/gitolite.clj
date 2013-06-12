@@ -6,7 +6,7 @@
      [clojure.string :only (replace-first)]
      [clojure.core :only [re-find]]
      [clojure.java.shell :only [sh]]
-     clojure.contrib.strint
+     clojure.core.incubator
      clojure.contrib.logging
      gitolite-webui.config 
      ))

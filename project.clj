@@ -3,6 +3,7 @@
   :dependencies [[org.clojure/clojure "1.5.1"]
                  ;; [org.clojure/clojure-contrib "1.2.0"]
                  [org.clojure/data.json "0.2.2"]
+                 [org.clojure/core.incubator "0.1.2"]
                  [ring/ring-devel "1.2.0-beta1"]
                  [ring/ring-jetty-adapter "1.1.8"]
                  [compojure "1.1.5"]

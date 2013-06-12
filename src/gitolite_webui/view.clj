@@ -5,7 +5,7 @@
      [net.cgrand.enlive-html :only [deftemplate defsnippet  defsnippets transform set-attr at attr= snippet]]
      [clojure.template :only [do-template]] 
      clojure.contrib.logging
-     clojure.contrib.strint) 
+     clojure.core.incubator) 
     (:require 
      (clojure.contrib [error-kit :as kit]) 
      [clojure.data.json :as json]
