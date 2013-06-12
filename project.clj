@@ -6,6 +6,10 @@
                  [org.clojure/core.incubator "0.1.2"]
                  [org.clojure/tools.logging "0.2.6"]
                  [org.clojure/java.jdbc "0.3.0-alpha4"]
+                 [slingshot "0.10.3"]
+                 ;; drop-in replacement for contrib.datalog
+                 ;; https://github.com/martintrojer/datalog
+                 [datalog "0.1.1"]
                  [ring/ring-devel "1.2.0-beta1"]
                  [ring/ring-jetty-adapter "1.1.8"]
                  [compojure "1.1.5"]
