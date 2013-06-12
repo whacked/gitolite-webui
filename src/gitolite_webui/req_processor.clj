@@ -1,7 +1,9 @@
 (ns gitolite-webui.req-processor
+  (:require
+     [clojure.data.json :as json]
+     )
     (:use 
      [gitolite-webui.persistency :only (clear-request)]
-     [clojure.data.json :as json]
      [gitolite-webui.gitolite :only (add-key add-user-to-repo)]))
 
 (defmulti process type)
