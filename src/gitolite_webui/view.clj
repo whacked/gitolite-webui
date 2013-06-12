@@ -8,7 +8,7 @@
      clojure.contrib.strint) 
     (:require 
      (clojure.contrib [error-kit :as kit]) 
-     [clojure.contrib.json :as json]
+     [clojure.data.json :as json]
      [gitolite-webui.gitolite :as git]
      [net.cgrand.enlive-html :as en]))
 
@@ -52,7 +52,7 @@
 	  (at f [(keyword (str "input#" (name k)))] (set-attr :value v))) form params))
 
 (defn request-as-json [req]
-  (json/json-str (assoc req :req-type (type req))))
+  (json/write-str (assoc req :req-type (type req))))
 
 (defmulti request-option type)
 (defmethod request-option :key-request [req]
