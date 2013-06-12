@@ -1,7 +1,7 @@
 (ns gitolite-webui.notification
     (:use 
       gitolite-webui.config
-      clojure.core.incubator
+      clojure.core.strint
       clojure.tools.logging
       [trammel.core :only (with-constraints contract)])
     (:import 
