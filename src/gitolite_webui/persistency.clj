@@ -2,7 +2,7 @@
     (:use 
      [gitolite-webui.notification :only (email-request)]
       gitolite-webui.debug gitolite-webui.schema
-     [clojure.contrib.io :only (file)]
+     [gitolite-webui.util :only (file)]
      [clojure.contrib.datalog.rules :only (<- ?- rules-set)]
      [clojure.contrib.def :only (defonce-)]
      [clojure.set :only (difference)] 

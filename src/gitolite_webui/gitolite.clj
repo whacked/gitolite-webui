@@ -1,5 +1,6 @@
 (ns gitolite-webui.gitolite
-    (:use [clojure.contrib.io :only [file]] 
+    (:use
+     [gitolite-webui.util :only (file)]
      [clojure.contrib.string :only [split-lines split as-str blank?]]
      [clojure.contrib.macros :only [letfn- ]]
      [clojure.string :only (replace-first)]

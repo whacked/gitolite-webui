@@ -1,7 +1,7 @@
 (ns gitolite-webui.config
     (:import (java.io File))
     (:require [clojure.data.json :as json])
-    (:use [clojure.contrib.io :only (file)]
+    (:use [gitolite-webui.util :only (file)]
      clojure.contrib.def 
      ))
 
