@@ -4,7 +4,6 @@
       gitolite-webui.debug gitolite-webui.schema
      [gitolite-webui.util :only (file)]
      [clojure.contrib.datalog.rules :only (<- ?- rules-set)]
-     [clojure.contrib.def :only (defonce-)]
      [clojure.set :only (difference)] 
       clojure.contrib.logging
       korma.db korma.core 

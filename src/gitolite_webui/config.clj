@@ -2,7 +2,6 @@
     (:import (java.io File))
     (:require [clojure.data.json :as json])
     (:use [gitolite-webui.util :only (file)]
-     clojure.contrib.def 
      ))
 
 (defonce resolution {:dev "test/resources/" :prod "./"})
