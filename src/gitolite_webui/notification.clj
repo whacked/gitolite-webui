@@ -2,7 +2,7 @@
     (:use 
       gitolite-webui.config
       clojure.core.incubator
-      clojure.contrib.logging
+      clojure.tools.logging
       [trammel.core :only (with-constraints contract)])
     (:import 
      (org.apache.commons.mail SimpleEmail DefaultAuthenticator EmailException)))

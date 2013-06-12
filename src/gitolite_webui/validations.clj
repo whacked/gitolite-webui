@@ -2,7 +2,7 @@
     (:use 
        decline.core
        [gitolite-webui.persistency :only [user-email]] 
-       clojure.contrib.logging)
+       clojure.tools.logging)
        
     (:require 
        [pretzel.strings :as str]))

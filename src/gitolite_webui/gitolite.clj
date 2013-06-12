@@ -7,7 +7,7 @@
      [clojure.core :only [re-find]]
      [clojure.java.shell :only [sh]]
      clojure.core.incubator
-     clojure.contrib.logging
+     clojure.tools.logging
      gitolite-webui.config 
      ))
 

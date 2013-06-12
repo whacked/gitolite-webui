@@ -5,7 +5,7 @@
      [gitolite-webui.util :only (file)]
      [clojure.contrib.datalog.rules :only (<- ?- rules-set)]
      [clojure.set :only (difference)] 
-      clojure.contrib.logging
+      clojure.tools.logging
       korma.db korma.core 
       clojure.contrib.sql
       gitolite-webui.config))

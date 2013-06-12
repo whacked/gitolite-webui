@@ -1,6 +1,6 @@
 (ns gitolite-webui.schema
    (:use korma.db korma.core clojure.contrib.sql 
-    clojure.contrib.logging
+    clojure.tools.logging
     [clojure.string :only (lower-case replace)]
     [gitolite-webui.config :only (connection-settings)]))
 

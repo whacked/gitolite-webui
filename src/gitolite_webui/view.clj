@@ -4,7 +4,7 @@
      [gitolite-webui.persistency :only [ssh-pending access-pending]]
      [net.cgrand.enlive-html :only [deftemplate defsnippet  defsnippets transform set-attr at attr= snippet]]
      [clojure.template :only [do-template]] 
-     clojure.contrib.logging
+     clojure.tools.logging
      clojure.core.incubator) 
     (:require 
      (clojure.contrib [error-kit :as kit]) 
