@@ -3,7 +3,7 @@
      [gitolite-webui.notification :only (email-request)]
       gitolite-webui.debug gitolite-webui.schema
      [gitolite-webui.util :only (file)]
-     [clojure.contrib.datalog.rules :only (<- ?- rules-set)]
+     [datalog.rules :only (<- ?- rules-set)]
      [clojure.set :only (difference)] 
       clojure.tools.logging
       korma.db korma.core 
