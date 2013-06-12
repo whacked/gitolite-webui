@@ -3,14 +3,13 @@
     (:use compojure.core clojure.tools.cli)
     (:require 
       (ring.adapter [jetty :as jet])
-      (clojure.contrib [duck-streams :as ds])
       [gitolite-webui.persistency :as persist]
       [gitolite-webui.routes :as routes]
       [gitolite-webui.config :as conf]
       [gitolite-webui.notification :as notify]
 	[compojure.handler :as handler]))
 
-(def *webdir* (str (ds/pwd) "/src/public"))
+(def *webdir* (str (System/getProperty "user.dir") "/src/public"))
 
 (def app (-> (handler/site routes/main-routes)))
 
