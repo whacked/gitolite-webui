@@ -9,7 +9,7 @@
       [gitolite-webui.notification :as notify]
 	[compojure.handler :as handler]))
 
-(def *webdir* (str (System/getProperty "user.dir") "/src/public"))
+(def ^:dynamic *webdir* (str (System/getProperty "user.dir") "/src/public"))
 
 (def app (-> (handler/site routes/main-routes)))
 
