@@ -18,7 +18,13 @@
 
 
 (defn notify-user [to subject body] 
-       {:pre [(non-nil-params notify-user) (keys-not-empty (:email @config) :host :from :user :pass)]}
+  ;;{:pre [(non-nil-params notify-user)
+  ;;       (keys-not-empty (:email @config) :host :from :user :pass)]}
+  {:pre [;; Checks that all input parameters to fn are not nil
+         (every? (comp not nil?) [to subject body])
+         ;; Checks that all given keys are not empty in map
+         (every? (comp not empty?) (map #(% (:email @config)) [:host :from :user :pass]))
+         ]}
 	 (let [{:keys [from user pass host port ssl]} (:email @config)]
 	   (try
 	     (do
