@@ -12,3 +12,5 @@ gitolite-db
 playground
 gitolite.log
 demo.*.db
+target/
+.lein-repl-history
