@@ -35,7 +35,16 @@
       (create-entity entity-name) 
       (pk key) 
       (table table-key) 
-      (entity-fields fields) 
+      ;;(entity-fields fields) 
+      ;; this leads to:
+      ;; ClassCastException clojure.lang.PersistentVector cannot be cast to clojure.lang.Named
+      ;; but fn below using https://github.com/korma/Korma/blob/master/src/korma/core.clj
+      ;; makes it go away
+      ((fn [ent]
+         ;;(entity-fields ent fields)
+           (update-in ent [:fields]
+                      kutils/vconcat
+                      (map #(keng/prefix ent %) fields))))
       (transform (transforms entity-key)))))
 
 (defn- existing-tables []
