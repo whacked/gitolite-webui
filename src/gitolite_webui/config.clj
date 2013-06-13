@@ -7,7 +7,8 @@
 (defonce resolution {:dev "test/resources/" :prod "./"})
 
 (defn read-config [env] 
-    (json/read-str (slurp (file (resolution env) "gitolite-webui.js"))))
+    (json/read-str (slurp (file (resolution env) "gitolite-webui.js"))
+                   :key-fn keyword))
 
 (defonce config (atom nil))
 
