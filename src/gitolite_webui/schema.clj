@@ -1,4 +1,8 @@
 (ns gitolite-webui.schema
+  (:require 
+     [korma.sql.utils :as kutils]
+     [korma.sql.engine :as keng]
+     )
    (:use korma.db korma.core
       [clojure.java.jdbc :only (with-connection connection create-table drop-table)]
     clojure.tools.logging
