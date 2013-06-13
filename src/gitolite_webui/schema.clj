@@ -21,7 +21,11 @@
                :repo-request {:key [:name :repo] :fields [:name :repo]}})
 
 (doseq [[entity-key {:keys [key fields]}] entities 
-  :let [entity-name (name entity-key) table-key (-> entity-name str (clojure.string/replace #"\-" "_") keyword)]] 
+  :let [entity-name (name entity-key)
+        table-key (-> entity-name
+                    str
+                    (clojure.string/replace #"\-" "_")
+                    keyword)]]
   (intern 'gitolite-webui.persistency (symbol entity-name) ; dynamic defentity
     (-> 
       (create-entity entity-name) 
