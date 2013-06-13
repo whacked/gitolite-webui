@@ -5,9 +5,11 @@
      [net.cgrand.enlive-html :only [deftemplate defsnippet  defsnippets transform set-attr at attr= snippet]]
      [clojure.template :only [do-template]] 
      clojure.tools.logging
-     clojure.core.strint) 
+     clojure.core.strint
+       [slingshot.slingshot :only [throw+ try+]]
+       
+       ) 
     (:require 
-     (clojure.contrib [error-kit :as kit]) 
      [clojure.data.json :as json]
      [gitolite-webui.gitolite :as git]
      [net.cgrand.enlive-html :as en]))
@@ -87,10 +89,13 @@
 
 (def requests-processed { :title "requests processed"  :main requests-processed-snip})
 
-(kit/deferror *missing-meta*[] [m] {:msg m :unhandled (kit/throw-msg RuntimeException)}) 
-
+;; XXX unchecked usage of throw+
 (defn render [t] 
   (if-not (t :title)
-	    (kit/raise *missing-meta* "Missing :title meta on form")
+	    (throw+ {
+              :type ::missing-meta
+              :message "Missing :title meta on form"
+              :unhandled RuntimeException
+              })
 	    (->> t general-layout  (apply str))))
 
