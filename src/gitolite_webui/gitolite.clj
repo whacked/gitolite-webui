@@ -37,7 +37,7 @@
 		   (->> (slurp-conf) split-lines (remove #(.startsWith % "#")) (partition-by blank?))))
 
 (defn permissions [lines]
-  (let [pair (fn [line] (->> line (.split line #"\=") (map #(.trim %)) reverse (into [])))] 
+  (let [pair (fn [line] (->> (clojure.string/split line #"\=") (map #(.trim %)) reverse (into [])))] 
     (into {} (reduce (fn [m line] (conj m (pair line))) [] lines))))
 
 (defn parse-conf []
