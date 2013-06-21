@@ -9,12 +9,11 @@
       korma.db korma.core 
       gitolite-webui.config))
 
-;; prevents $tablename from becoming "$tablename" in h2's sql
-;; https://groups.google.com/forum/#!topic/sqlkorma/KS_kGVjPs6I
-(korma.config/set-delimiters "")
-
 (defn initialize-db [] 
   (defdb gitolite-db (connection-settings))
+  ;; prevents $tablename from becoming "$tablename" in h2's sql
+  ;; https://groups.google.com/forum/#!topic/sqlkorma/KS_kGVjPs6I
+  (korma.config/set-delimiters "")
   ;Create schema will create a table only if it does not exist alreay
   (create-schema))
 
