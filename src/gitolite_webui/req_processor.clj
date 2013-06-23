@@ -11,6 +11,6 @@
 (defmethod process :repo-request [req] (add-user-to-repo req))
 
 (defn process-requests [requests]
-  (doseq [json-req requests :let [req (json/read-str json-req true) typed-req (with-meta req {:type (-> req :req-type keyword)})]] 
+  (doseq [json-req requests :let [req (json/read-str json-req :key-fn keyword) typed-req (with-meta req {:type (-> req :req-type keyword)})]] 
 	   (process typed-req)
 	   (clear-request typed-req)))
