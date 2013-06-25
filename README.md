@@ -10,15 +10,15 @@ Current version is running against clojure 1.5.1 and associated deps, updated as
 
 ### settings
 
-configuration is stored and loaded in json format from =gitolite-webui.js=
+configuration is stored and loaded in json format from `gitolite-webui.js`
 
-=gitolite-home= should be set to a working gitolite-admin directory *with trailing slash*
+`gitolite-home` should be set to a working gitolite-admin directory *with trailing slash*
 
 ### running from emacs
 
-start an nrepl session and from the =gitolite-webui.core= namespace, eval =(-main "start")=
+start an nrepl session and from the `gitolite-webui.core` namespace, eval `(-main "start")`
 
-This will load =gitolite-webui.js= from the project root, which is also the =:prod= (production) setting. There is also a =:dev= setting
+This will load `gitolite-webui.js` from the project root, which is also the `:prod` (production) setting. There is also a `:dev` setting
 
 
 
