@@ -55,7 +55,9 @@
 (defn- perm-to-user [user perm] (str "        " perm "     =   "   user))
 
 (defn user-repo-manipulation [{:keys [name repo]}]
-  (let [conf (slurp-conf) pattern (->> ["repo\\s+" repo] (apply str) re-pattern) match (re-find pattern conf)]
+  (let [conf (slurp-conf)
+        pattern (re-pattern (str "repo\\s+" repo))
+        match (re-find pattern conf)]
     (replace-first conf pattern (str match "\n" (perm-to-user name "RW+")))))
 
 (defn add-user-to-repo  [{:keys [name repo] :as req} ]
