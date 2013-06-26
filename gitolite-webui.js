@@ -1,6 +1,6 @@
 { 
   "gitolite-home":"test/resources/",
-  "admins":{"admin":"changeme"}
+  "admins":{"admin":"changeme"},
   "email":{
      "from":"admin",
      "user":"user",
@@ -9,7 +9,7 @@
      "port":587,
      "protocol" :"smtp",
      "ssl":true
-   }
+   },
   "db": {
      "user":"user",
      "password":"pass",
