@@ -16,7 +16,7 @@ The initial example config by narkisr is in `config-example.yml`. Copy this to `
 and modify it to your liking. The current setup is ready to run, using `test/resources` as the working gitolite-admin
 directory.
 
-`gitolite-home` should be set to a working gitolite-admin directory *with trailing slash*
+`gitolite-home` should be set to a working gitolite-admin directory. Trailing slashe optional.
 
 ### running from emacs
 

@@ -8,8 +8,14 @@
 
 (defonce resolution {:dev "test/resources/" :prod "./"})
 
+;; TODO
+;; i'd actually strip the slash and handle path joins later
 (defn read-config [env]
-  (yaml/parse-string (slurp (file (resolution env) "config.yml"))))
+  (let [conf (yaml/parse-string (slurp (file (resolution env) "config.yml")))
+        gitolite-home-path (conf :gitolite-home)]
+    (if-not (.endsWith gitolite-home-path "/")
+      (assoc conf :gitolite-home (str gitolite-home-path "/"))
+      conf)))
 
 (defonce config (atom nil))
 
