@@ -71,7 +71,8 @@
   (let [conf (gitoconf)]
     (spit conf (user-repo-manipulation req)) 
     (git :add ["conf"])  
-    (git :commit ["-m" (<< "Adding ~{name} to ~{repo}")])))
+    (git :commit ["-m" (<< "ADDUSER @~{name} to ~{repo}")])))
+
 
 (defn convert-windows [key host]
   (<< "ssh-rsa ~(apply str (drop-last (nthnext (.split key \"\\n\") 2))) ~{host}\n" ))
@@ -103,7 +104,7 @@
   (let [formated-key (formatk key) key-file (str "keydir/" name ".pub" )]
     (spit (resolve-path key-file) key)
     (git :add [key-file])
-    (git :commit ["-m" (<< "Adding key for ~{name}")])))
+    (git :commit ["-m" (<< "ADDKEY for @~{name}")])))
 
 (defn stage [files]
   "Stages given files in git" 
