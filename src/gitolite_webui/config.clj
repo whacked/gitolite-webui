@@ -1,14 +1,15 @@
 (ns gitolite-webui.config
     (:import (java.io File))
-    (:require [clojure.data.json :as json])
+    (:require
+     [clj-yaml.core :as yaml]
+     )
     (:use [gitolite-webui.util :only (file)]
      ))
 
 (defonce resolution {:dev "test/resources/" :prod "./"})
 
-(defn read-config [env] 
-    (json/read-str (slurp (file (resolution env) "gitolite-webui.js"))
-                   :key-fn keyword))
+(defn read-config [env]
+  (yaml/parse-string (slurp (file (resolution env) "config.yml"))))
 
 (defonce config (atom nil))
 

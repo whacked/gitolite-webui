@@ -1,0 +1,16 @@
+admins:
+  admin: changeme
+db:
+  password: pass
+  subname: demo
+  user: user
+email:
+  from: admin
+  host: smtp.gmail.com
+  pass: pass
+  port: 587
+  protocol: smtp
+  ssl: true
+  user: user
+gitolite-home: test/resources/
+
