@@ -45,13 +45,6 @@
 		  (assoc m (-> repo first repo-name keyword) (permissions (rest repo))))
 	    {} (raw-repos)))
 
-(defn conf2str [conf-map]
-  (apply str
-         (for [[repo-key user-perm-list] conf-map]
-           (str "repo    " (as-str repo-key) "\n"
-                (apply str (interpose "\n" (map #(apply perm-to-user %) user-perm-list)))
-                "\n\n"))))
-
 (defn repos []
   (map as-str (keys (parse-conf))))
 
@@ -60,6 +53,13 @@
 
 
 (defn- perm-to-user [user perm] (str "        " perm "     =   "   user))
+
+(defn conf2str [conf-map]
+  (apply str
+         (for [[repo-key user-perm-list] conf-map]
+           (str "repo    " (as-str repo-key) "\n"
+                (apply str (interpose "\n" (map #(apply perm-to-user %) user-perm-list)))
+                "\n\n"))))
 
 (defn user-repo-manipulation [{:keys [name repo]}]
   (let [conf (slurp-conf)
