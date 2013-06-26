@@ -73,6 +73,24 @@
     (git :add ["conf"])  
     (git :commit ["-m" (<< "ADDUSER @~{name} to ~{repo}")])))
 
+(defn add-repo
+  "blindly add a repo to the conf.
+   does not check to see whether it is already there
+
+   as per gitolite conf syntax, the repo must have at
+   least 1 user in the user list
+
+   the listed users will be added with RW+ perms
+   "
+  ([repo-name user-main & user-more]
+     (let [conf (gitoconf)]
+       (spit conf (str (slurp-conf) "\n"
+                       "repo    " repo-name "\n"
+                       (apply str
+                              (map #(perm-to-user % "RW+") (cons user-main user-more)))
+                       "\n")) 
+       (git :add ["conf"])  
+       (git :commit ["-m" (<< "ADDREPO ~{repo-name} with @~{user-main}")]))))
 
 (defn convert-windows [key host]
   (<< "ssh-rsa ~(apply str (drop-last (nthnext (.split key \"\\n\") 2))) ~{host}\n" ))
